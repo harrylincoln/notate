@@ -1,6 +1,7 @@
 import './App.css';
 
 import React from 'react';
+import { notEqual } from 'assert';
 import symbols from './utils/symbols';
 
 const canvasHeight = 440;
@@ -50,6 +51,8 @@ class App extends React.Component {
       maxAmountNoteValue: 64, // hemidemisemiquaver
       ifSavedNotes: false,
       saveActive: false,
+      isTripletMode: false,
+      isNotesToggle: true,
     };
     this.canvasRef = React.createRef();
     this.linepointNearestMouse = this.linepointNearestMouse.bind(this);
@@ -77,7 +80,7 @@ class App extends React.Component {
     });
   }
 
-  readyCursorPointer(duration) {
+  setNoteValue(duration) {
     // set state of the note length and recalc staves
     this.setState({activeNoteLength: duration});
   }
@@ -111,24 +114,59 @@ class App extends React.Component {
       // base
       ctx.beginPath();
       ctx.ellipse(note.closestBeatX, note.lineY, note.baseNoteSize, ((note.baseNoteSize / 2) * 3), Math.PI / 3, 0, 2 * Math.PI);
-      if(denomination <= 2) {
+      if(denomination <= 2) { // fill or not, based on length
         ctx.stroke();
       } else {
-        ctx.closePath();
         ctx.fill();
       }
       ctx.closePath();
       
-      // stem
+      // stems & flags
       if(denomination > 1) {
+        const stemScale = 6; // increase when more flags
+        const stemPosX = (note.closestBeatX + stemScale) + note.baseNoteSize;
+        const stemPosYStart = note.lineY;
+        const stemPosYEnd = stemPosYStart - (note.baseNoteSize * stemScale);
+
         ctx.beginPath();
-        ctx.moveTo((note.closestBeatX + 6) + note.baseNoteSize, note.lineY);
-        ctx.lineTo((note.closestBeatX + 6) + note.baseNoteSize, note.lineY - (note.baseNoteSize * 6));
+        ctx.moveTo(stemPosX, stemPosYStart);
+        ctx.lineTo(stemPosX, stemPosYEnd);
         ctx.stroke();
         ctx.closePath();
-      }
+      
+        if(denomination >= 8) {
+          // flags
+          // Define the points as {x, y}
 
-      // fill or not to fill ellipse
+          const flagPosAndScaleX = val => ((val * stemScale) + (stemPosX - (note.baseNoteSize * 2)));
+          const flagPosAndScaleY = val => ((val * stemScale) + stemPosYEnd);
+
+          let start1 = { x: flagPosAndScaleX(6),  y: flagPosAndScaleY(1) };
+          let cp1 =    { x: flagPosAndScaleX(7),  y: flagPosAndScaleY(4) };
+          let cp2 =    { x: flagPosAndScaleX(8),  y: flagPosAndScaleY(5) };
+          let end1 =   { x: flagPosAndScaleX(10), y: flagPosAndScaleY(6) };
+
+          let cp3 =    { x: flagPosAndScaleX(13), y: flagPosAndScaleY(7) };
+          let cp4 =    { x: flagPosAndScaleX(14), y: flagPosAndScaleY(16) };
+          let end2 =   { x: flagPosAndScaleX(10), y: flagPosAndScaleY(17) };
+
+          let cp5 =   { x: flagPosAndScaleX(16),  y: flagPosAndScaleY(3) };
+          let cp6 =   { x: flagPosAndScaleX(6),   y: flagPosAndScaleY(7) };
+          let end3 =  { x: flagPosAndScaleX(6),   y: flagPosAndScaleY(7) };
+
+          // Draw stages of flag
+          ctx.beginPath();
+          ctx.moveTo(start1.x, start1.y);
+          ctx.bezierCurveTo(cp1.x, cp1.y, cp2.x, cp2.y, end1.x, end1.y);
+          // ctx.moveTo(end1.x, end1.y);
+          ctx.bezierCurveTo(cp3.x, cp3.y, cp4.x, cp4.y, end2.x, end2.y);
+          // ctx.moveTo(end2.x, end2.y);
+          ctx.bezierCurveTo(cp5.x, cp5.y, cp6.x, cp6.y, end3.x, end3.y);
+          // ctx.moveTo(end3.x, end3.y);
+          ctx.lineTo(end3.x, start1.y);
+          ctx.fill(); 
+        }
+      }
 
       // draw ledger(s)
       if(note.closestStave.ledger) {
@@ -203,24 +241,7 @@ class App extends React.Component {
     this.draw(offsetX,offsetY,closestBeatX,linepoint.y, closestStave);
   }
 
-  wipe() {
-    const ctx = this.canvasRef.current.getContext('2d');
-    ctx.clearRect(0,0,canvasWidth,canvasHeight);
-  }
-
-  restore() {
-    const {activeNoteLength} = this.state;
-    const ctx = this.canvasRef.current.getContext('2d');
-    if(activeNoteLength <= 2) {
-      ctx.stroke();
-    } else {
-      ctx.closePath();
-      ctx.fill();
-    }
-  }
-
   saveNote() {
-    // const ctx = this.canvasRef.current.getContext('2d');
     this.setState({ifSavedNotes: true, saveActive: true});
   }
   
@@ -234,23 +255,25 @@ class App extends React.Component {
           }))
       } 
       else {
-        // if save active pop this into array +1 activeBeatIdx?
-        // if((savedNotesArr[activeBeatIdx].closestBeatX !== ctxCords.closestBeatX) && (savedNotesArr[activeBeatIdx].lineY !== ctxCords.lineY)) {
-        //   console.log('1.0 savedNotesArr[activeBeatIdx].lineY', savedNotesArr[activeBeatIdx].lineY);
-        //   console.log('1.1 ctxCords.lineY', ctxCords.lineY);
-        //   console.log('2.0 savedNotesArr[activeBeatIdx].closestBeatX', savedNotesArr[activeBeatIdx].closestBeatX);
-        //   console.log('2.1 ctxCords.closestBeatX', ctxCords.closestBeatX);
           this.setState(prevState => ({
             savedNotesArr: [...prevState.savedNotesArr, ctxCords],
-            activeBeatIdx: this.state.activeBeatIdx + 1,
+            activeBeatIdx: activeBeatIdx + 1,
             saveActive: false,
           }));
-        //}
       }
     }
   }
 
+  setTriplet() {
+    console.log('setTriplet!');
+    this.setState({isTripletMode: true});
+  }
 
+  toggleNotesRests() {
+    this.setState(prevState => ({
+      isNotesToggle: !prevState.isNotesToggle
+    }));
+  }
 
   render() {
     // const returnBtns = () => {
@@ -259,16 +282,18 @@ class App extends React.Component {
     //   while(counter % 2 === 0) {
     //     items.push(
     //       <div style={{
-    //         alignSelf: 'flex-start',
+    //         alignSelf: 'center',
     //         border: '1px solid red',
     //         padding: '0.5rem',
     //         cursor: 'pointer',
     //         margin: '0.25rem',
-    //       }} onClick={() => this.readyCursorPointer(64)}>Whole</div>
+    //       }} onClick={() => this.setNoteValue(64)}>Whole</div>
     //     );
     //     counter = counter / 2;
     //   }
     // }
+
+    const { isNotesToggle } = this.state;
 
     return (
       <div className="App">
@@ -291,79 +316,72 @@ class App extends React.Component {
             padding: '1rem',
             color: 'black',
           }}>
+              <p style={{
+                alignSelf: 'center',
+                color: 'white',
+                cursor:'pointer',
+                }}
+                onClick={() => this.toggleNotesRests()}
+            
+            >{isNotesToggle ? 'Notes: ' : 'Rests: '}</p>
               <div style={{
-                alignSelf: 'flex-start',
+                alignSelf: 'center',
                 border: '1px solid red',
                 padding: '0.5rem',
                 cursor: 'pointer',
                 margin: '0.25rem',
-              }} onClick={() => this.readyCursorPointer(64)}>Whole</div>
+              }} onClick={() => this.setNoteValue(64)}>Whole</div>
               <div style={{
-                alignSelf: 'flex-start',
+                alignSelf: 'center',
                 border: '1px solid red',
                 padding: '0.5rem',
                 cursor: 'pointer',
                 margin: '0.25rem',
-              }} onClick={() => this.readyCursorPointer(32)}>Half</div>
+              }} onClick={() => this.setNoteValue(32)}>Half</div>
               <div style={{
-                alignSelf: 'flex-start',
+                alignSelf: 'center',
                 border: '1px solid red',
                 padding: '0.5rem',
                 cursor: 'pointer',
                 margin: '0.25rem',
-              }} onClick={() => this.readyCursorPointer(16)}>Quarter</div>
+              }} onClick={() => this.setNoteValue(16)}>Quarter</div>
               <div style={{
-                alignSelf: 'flex-start',
+                alignSelf: 'center',
                 border: '1px solid red',
                 padding: '0.5rem',
                 cursor: 'pointer',
                 margin: '0.25rem',
-              }} onClick={() => this.readyCursorPointer(8)}>Eighth</div>
+              }} onClick={() => this.setNoteValue(8)}>Eighth</div>
               <div style={{
-                alignSelf: 'flex-start',
+                alignSelf: 'center',
                 border: '1px solid red',
                 padding: '0.5rem',
                 cursor: 'pointer',
                 margin: '0.25rem',
-              }} onClick={() => this.readyCursorPointer(4)}>Sixteenth</div>
+              }} onClick={() => this.setNoteValue(4)}>Sixteenth</div>
               <div style={{
-                alignSelf: 'flex-start',
+                alignSelf: 'center',
                 border: '1px solid red',
                 padding: '0.5rem',
                 cursor: 'pointer',
                 margin: '0.25rem',
-              }} onClick={() => this.readyCursorPointer(2)}>Thirty Second</div>
+              }} onClick={() => this.setNoteValue(2)}>Thirty Second</div>
               <div style={{
-                alignSelf: 'flex-start',
+                alignSelf: 'center',
                 border: '1px solid red',
                 padding: '0.5rem',
                 cursor: 'pointer',
                 margin: '0.25rem',
-              }} onClick={() => this.readyCursorPointer(1)}>Sixty Fourth</div>
-              {/* <div style={{
-                alignSelf: 'flex-start',
-                border: '1px solid red',
-                padding: '0.5rem',
-                cursor: 'pointer',
-                margin: '0.25rem',
-              }} onClick={() => this.wipe()}>Wipe</div>
+              }} onClick={() => this.setNoteValue(1)}>Sixty Fourth</div>
               <div style={{
-                alignSelf: 'flex-start',
+                alignSelf: 'center',
                 border: '1px solid red',
                 padding: '0.5rem',
                 cursor: 'pointer',
                 margin: '0.25rem',
-              }} onClick={() => this.restore()}>Restore</div> */}
+              }} onClick={() => this.setTriplet()}>Triplet</div>
           </div>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
+          </header>
       </div>
     );
   }
