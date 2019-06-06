@@ -1,43 +1,13 @@
 import './App.css';
 
 import React from 'react';
-import { notEqual } from 'assert';
-import symbols from './utils/symbols';
+import { staves } from './utils/notation-rules';
 
 const canvasHeight = 440;
 const canvasWidth = 800;
 const barWidthPadding = canvasWidth / 16;
 const tolerance = 5;
 const baseNoteSize = 18;
-
-let staves = {
-  map: [
-    {x0:0,y0:0,x1:800,y1:0, ledger: [-5,-3, 1]},
-    {x0:0,y0:20,x1:800,y1:20, ledger: [-4,-2, 0]},
-    {x0:0,y0:40,x1:800,y1:40, ledger: [-3,-1]},
-    {x0:0,y0:60,x1:800,y1:60, ledger: [-2,0]},
-    {x0:0,y0:80,x1:800,y1:80, ledger: [-1]},
-    {x0:0,y0:100,x1:800,y1:100, ledger: [0]},
-    {x0:0,y0:120,x1:800,y1:120},
-    {x0:0,y0:140,x1:800,y1:140, draw: true},
-    {x0:0,y0:160,x1:800,y1:160},
-    {x0:0,y0:180,x1:800,y1:180, draw: true},
-    {x0:0,y0:200,x1:800,y1:200},
-    {x0:0,y0:220,x1:800,y1:220, draw: true},
-    {x0:0,y0:240,x1:800,y1:240},
-    {x0:0,y0:260,x1:800,y1:260, draw: true},
-    {x0:0,y0:280,x1:800,y1:280},
-    {x0:0,y0:300,x1:800,y1:300, draw: true},
-    {x0:0,y0:320,x1:800,y1:320},
-    {x0:0,y0:340,x1:800,y1:340, ledger: [0]},
-    {x0:0,y0:360,x1:800,y1:360, ledger: [1]},
-    {x0:0,y0:380,x1:800,y1:380, ledger: [2,0]},
-    {x0:0,y0:400,x1:800,y1:400, ledger: [3,1]},
-    {x0:0,y0:420,x1:800,y1:420, ledger: [4,2,0]},
-    {x0:0,y0:440,x1:800,y1:440, ledger: [5,3,1]},
-  ],
-  snapTolerance: 10,
-};
 
 class App extends React.Component {
 
