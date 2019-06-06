@@ -54,7 +54,8 @@ export let staves = {
 
   const dicMapping = {A:0,B:1,C:2,D:3,E:4,F:5,G:6}; 
 
-  // [F, F, G, A, B, C]
+  // [{activeNoteLength: 16, pitch: {A:0}, closestBeatX: 250}]
+
   export const mutateNotesToActiveKey = (notesArr, activeKey) => {
     const mapper = circleOfFifths[activeKey];
     // const notesTest = ['F', 'F', 'G', 'A', 'B', 'C'];
