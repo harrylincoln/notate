@@ -1,3 +1,5 @@
+import positions from './positions';
+
 export let staves = {
     map: [
       {x0:0,y0:0,x1:800,y1:0, ledger: [-5,-3, 1], note: {F: 3}},
@@ -35,44 +37,98 @@ export let staves = {
     2 = b,
     https://www.musicnotes.com/now/wp-content/uploads/Circle-of-Fifths-Simple-1024x1024.png
 */
-  const circleOfFifths = {
-    'C':     [0,0,0,0,0,0,0],
-    'G':     [0,0,0,0,0,1,0],
-    'D':     [0,0,1,0,0,1,0],
-    'A':     [0,0,1,0,0,1,1],
-    'E':     [0,0,1,1,0,1,1],
-    'B':     [1,0,1,1,0,1,1],
-    'F#':    [1,0,1,1,1,1,1],
-    'Gb':    [2,2,2,2,2,0,2],
-    'Db':    [2,2,0,2,2,0,2],
-    'C#':    [1,1,1,1,1,1,1],
-    'Ab':    [2,2,0,2,2,0,0],
-    'Eb':    [2,2,0,0,2,0,0],
-    'Bb':    [0,2,0,0,2,0,0],
-    'F':     [0,2,0,0,0,0,0],
-  };
+const circleOfFifths = {
+  'C':     [0,0,0,0,0,0,0],
+  'G':     [0,0,0,0,0,1,0],
+  'D':     [0,0,1,0,0,1,0],
+  'A':     [0,0,1,0,0,1,1],
+  'E':     [0,0,1,1,0,1,1],
+  'B':     [1,0,1,1,0,1,1],
+  'F#':    [1,0,1,1,1,1,1],
+  'Gb':    [2,2,2,2,2,0,2],
+  'Db':    [2,2,0,2,2,0,2],
+  'C#':    [1,1,1,1,1,1,1],
+  'Ab':    [2,2,0,2,2,0,0],
+  'Eb':    [2,2,0,0,2,0,0],
+  'Bb':    [0,2,0,0,2,0,0],
+  'F':     [0,2,0,0,0,0,0],
+};
 
-  const dicMapping = {A:0,B:1,C:2,D:3,E:4,F:5,G:6}; 
+const dicMapping = {A:0,B:1,C:2,D:3,E:4,F:5,G:6}
 
-  // [{activeNoteLength: 16, pitch: {A:0}, closestBeatX: 250}]
 
-  export const mutateNotesToActiveKey = (notesArr, activeKey) => {
-    const mapper = circleOfFifths[activeKey];
-    // const notesTest = ['F', 'F', 'G', 'A', 'B', 'C'];
+  /*
+  E ----------------------------------------------------------------|
+  B ----------------------------------------------------------------|
+  G ----------------------------------------------------------------|
+  D ----------------------------------------------------------------|
+  A ----------------------------------------------------------------|
+  E ----------------------------------------------------------------|
+  */
 
-    return notesArr.reduce((acc, curr) => {
-        const idxToSearchMapper = dicMapping[curr];
-        switch (mapper[idxToSearchMapper]) {
-            case 1:
-                acc.push(`${curr}#`)
-                break;
-            case 2:
-                acc.push(`${curr}b`)
-                break;
-            default:
-                acc.push(curr);
-                break;
-        }
-        return acc;
-    }, []);
-  };
+  /* 1. sort array based on closestBeatX value
+     2. Mutate array by transposing note entries to active key
+     3. Spread tab values onto given note object entry 
+     4. Draw asci-like table
+  */
+
+
+/* Sample input for drawMarkupBar()
+  [
+    {activeNoteLength: 16, pitch: {A:0}, closestBeatX: 50, tab: [{string: 1,fret: 6},{string: 2,fret: 1}]},  // quaver
+    {activeNoteLength: 16, pitch: {B:2}, closestBeatX: 250}, // quaver
+    {activeNoteLength: 16, pitch: {F:0}, closestBeatX: 450}, // quaver
+    {activeNoteLength: 8,  pitch: {G:1}, closestBeatX: 650}, // semi-quaver
+    {activeNoteLength: 8,  pitch: {D:1}, closestBeatX: 750}, // semi-quaver
+  ]
+*/
+export const drawMarkupBar = (assignTabValuesArr) => {
+  // 
+};
+
+export const assignTabValues = (mutatedNotesArr) => {
+  return mutateNotesToActiveKey.reduce((acc, curr) => {
+    const tabPositions = positions[Object.keys(curr.pitch)][Object.values(curr.pitch)];
+    acc.push({...curr,
+      tabPositions,
+    });
+    return acc;
+  }, []);
+};
+
+/* Sample input for mutateNotesToActiveKey()
+  [
+    {activeNoteLength: 16, pitch: {A:0}, closestBeatX: 50},  // quaver
+    {activeNoteLength: 16, pitch: {B:2}, closestBeatX: 250}, // quaver
+    {activeNoteLength: 16, pitch: {F:0}, closestBeatX: 450}, // quaver
+    {activeNoteLength: 8,  pitch: {G:1}, closestBeatX: 650}, // semi-quaver
+    {activeNoteLength: 8,  pitch: {D:1}, closestBeatX: 750}, // semi-quaver
+  ]
+*/
+export const mutateNotesToActiveKey = (notesArr, activeKey) => {
+  const mapper = circleOfFifths[activeKey];
+
+  return notesArr.reduce((acc, curr) => {
+      const idxToSearchMapper = dicMapping[Object.keys(curr.pitch)];
+      switch (mapper[idxToSearchMapper]) {
+        case 1:
+          acc.push({...curr, 
+            pitch: {
+              [`${Object.keys(curr.pitch)}#`]: Object.values(curr.pitch)[0]
+            } 
+          })
+          break;
+        case 2:
+          acc.push({...curr, 
+            pitch: {
+              [`${Object.keys(curr.pitch)}b`]: Object.values(curr.pitch)[0]
+            } 
+          })
+          break;
+        default:
+          acc.push(curr);
+        break;
+      }
+      return acc;
+  }, []);
+};
