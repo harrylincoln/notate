@@ -1,10 +1,16 @@
 import './App.css';
 
 import React from 'react';
-import { staves } from './utils/notation-rules';
+import { staves, 
+  mutateNotesToActiveKey, 
+  assignTabValues, 
+  groupByPosition, 
+  groupByString,
+  buildAsciTable,
+} from './utils/notation-rules';
 
 const canvasHeight = 440;
-const canvasWidth = 800;
+const canvasWidth = 640;
 const barWidthPadding = canvasWidth / 16;
 const tolerance = 5;
 const baseNoteSize = 18;
@@ -28,6 +34,7 @@ class App extends React.Component {
     this.linepointNearestMouse = this.linepointNearestMouse.bind(this);
     this.handleMouseMove = this.handleMouseMove.bind(this);
     this.saveNote = this.saveNote.bind(this);
+    this.buildTable = this.buildTable.bind(this);
 
     this.beatLineCords = null;
 
@@ -244,6 +251,38 @@ class App extends React.Component {
       isNotesToggle: !prevState.isNotesToggle
     }));
   }
+  
+  buildTable() {
+    const {savedNotesArr} = this.state;
+    const schema = savedNotesArr.reduce((acc, curr) => {
+      acc.push({
+        activeNoteLength: curr.activeNoteLength,
+        pitch: curr.closestStave.note,
+        closestBeatX: curr.closestBeatX
+      });
+      return acc;
+    }, []);
+    const mutatedToKeyOfA = mutateNotesToActiveKey(schema, 'C');
+
+    console.log('1. mutatedToKeyOfA', mutatedToKeyOfA);
+
+    const tabValuesAssigned = assignTabValues(mutatedToKeyOfA);
+
+    console.log('2. tabValuesAssigned', tabValuesAssigned);
+
+    const groupByPosistion = groupByPosition(tabValuesAssigned);
+
+    console.log('3. groupByPosistion', groupByPosistion);
+
+    const groupByStringArr = groupByString(groupByPosistion);
+
+    console.log('4. groupByString', groupByStringArr);
+
+    const buildMarkupTable = buildAsciTable(groupByStringArr);
+
+    console.log('5. buildMarkupTable', buildMarkupTable);
+
+  }
 
   render() {
     // const returnBtns = () => {
@@ -349,7 +388,7 @@ class App extends React.Component {
                 padding: '0.5rem',
                 cursor: 'pointer',
                 margin: '0.25rem',
-              }} onClick={() => this.setTriplet()}>Triplet</div>
+              }} onClick={() => this.buildTable()}>Console.log(asci table)</div>
           </div>
           </header>
       </div>

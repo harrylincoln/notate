@@ -1,4 +1,13 @@
-import positions from './positions';
+/* eslint-disable no-loop-func */
+import {positions} from './positions';
+
+const originalEntry = [
+  {activeNoteLength: 16, pitch: {A:0}, closestBeatX: 50},  // quaver
+  {activeNoteLength: 16, pitch: {B:2}, closestBeatX: 250}, // quaver
+  {activeNoteLength: 16, pitch: {F:0}, closestBeatX: 450}, // quaver
+  {activeNoteLength: 8,  pitch: {G:1}, closestBeatX: 650}, // semi-quaver
+  {activeNoteLength: 8,  pitch: {D:1}, closestBeatX: 750}, // semi-quaver
+];
 
 export let staves = {
     map: [
@@ -72,39 +81,16 @@ const dicMapping = {A:0,B:1,C:2,D:3,E:4,F:5,G:6}
      4. Draw asci-like table
   */
 
-
-/* Sample input for drawMarkupBar()
-  [
-    {activeNoteLength: 16, pitch: {A:0}, closestBeatX: 50, tab: [{string: 1,fret: 6},{string: 2,fret: 1}]},  // quaver
-    {activeNoteLength: 16, pitch: {B:2}, closestBeatX: 250}, // quaver
-    {activeNoteLength: 16, pitch: {F:0}, closestBeatX: 450}, // quaver
-    {activeNoteLength: 8,  pitch: {G:1}, closestBeatX: 650}, // semi-quaver
-    {activeNoteLength: 8,  pitch: {D:1}, closestBeatX: 750}, // semi-quaver
-  ]
-*/
-export const drawMarkupBar = (assignTabValuesArr) => {
-  // 
-};
-
-export const assignTabValues = (mutatedNotesArr) => {
-  return mutateNotesToActiveKey.reduce((acc, curr) => {
-    const tabPositions = positions[Object.keys(curr.pitch)][Object.values(curr.pitch)];
-    acc.push({...curr,
-      tabPositions,
-    });
-    return acc;
-  }, []);
-};
-
 /* Sample input for mutateNotesToActiveKey()
   [
-    {activeNoteLength: 16, pitch: {A:0}, closestBeatX: 50},  // quaver
-    {activeNoteLength: 16, pitch: {B:2}, closestBeatX: 250}, // quaver
-    {activeNoteLength: 16, pitch: {F:0}, closestBeatX: 450}, // quaver
-    {activeNoteLength: 8,  pitch: {G:1}, closestBeatX: 650}, // semi-quaver
-    {activeNoteLength: 8,  pitch: {D:1}, closestBeatX: 750}, // semi-quaver
+    {activeNoteLength: 16, pitch: {A:0}, closestBeatX: 40},  // quaver
+    {activeNoteLength: 16, pitch: {B:2}, closestBeatX: 200}, // quaver
+    {activeNoteLength: 16, pitch: {F:0}, closestBeatX: 360}, // quaver
+    {activeNoteLength: 8,  pitch: {G:1}, closestBeatX: 520}, // semi-quaver
+    {activeNoteLength: 8,  pitch: {D:1}, closestBeatX: 600}, // semi-quaver
   ]
 */
+
 export const mutateNotesToActiveKey = (notesArr, activeKey) => {
   const mapper = circleOfFifths[activeKey];
 
@@ -131,4 +117,325 @@ export const mutateNotesToActiveKey = (notesArr, activeKey) => {
       }
       return acc;
   }, []);
+};
+
+/* Sample input for assignTabValues()
+  [
+  {
+    "activeNoteLength": 16,
+    "pitch": {
+      "A": 0
+    },
+    "closestBeatX": 50
+  },
+  {
+    "activeNoteLength": 16,
+    "pitch": {
+      "B": 2
+    },
+    "closestBeatX": 250
+  },
+  {
+    "activeNoteLength": 16,
+    "pitch": {
+      "F#": 0
+    },
+    "closestBeatX": 450
+  },
+  {
+    "activeNoteLength": 8,
+    "pitch": {
+      "G#": 1
+    },
+    "closestBeatX": 650
+  },
+  {
+    "activeNoteLength": 8,
+    "pitch": {
+      "D": 1
+    },
+    "closestBeatX": 750
+  }
+]
+*/
+
+
+export const assignTabValues = (mutatedNotesArr) => {
+  return mutatedNotesArr.reduce((acc, curr) => {
+    const tabPosition = positions[Object.keys(curr.pitch)][Object.values(curr.pitch)];
+    acc.push({...curr,
+      tabPosition,
+    });
+    return acc;
+  }, []);
+};
+
+
+/* Sample input for groupByPositionAndTrim()
+  [
+    {"activeNoteLength": 16, "pitch": {"A": 0},"closestBeatX": 50, "tabPositions": [
+      {
+        "string": 1,
+        "fret": 5
+      },
+      {
+        "string": 2,
+        "fret": 0
+      }
+    ]
+  },
+  {"activeNoteLength": 16,"pitch": {"B": 2},"closestBeatX": 250,"tabPositions": [
+      {
+        "string": 3,
+        "fret": 21
+      },
+      {
+        "string": 4,
+        "fret": 16
+      },
+      {
+        "string": 5,
+        "fret": 12
+      },
+      {
+        "string": 6,
+        "fret": 7
+      }
+    ]
+  },
+  {"activeNoteLength": 16,"pitch": {"F#": 0},"closestBeatX": 450,"tabPositions": [
+      {
+        "string": 1,
+        "fret": 2
+      }
+    ]
+  },
+  {"activeNoteLength": 8,"pitch": {"G#": 1},"closestBeatX": 650,"tabPositions": [
+      {
+        "string": 1,
+        "fret": 16
+      },
+      {
+        "string": 2,
+        "fret": 11
+      },
+      {
+        "string": 3,
+        "fret": 6
+      }
+    ]
+  },
+  {"activeNoteLength": 8,"pitch": {"D": 1},"closestBeatX": 750,"tabPositions": [
+      {
+        "string": 2,
+        "fret": 17
+      },
+      {
+        "string": 3,
+        "fret": 12
+      },
+      {
+        "string": 4,
+        "fret": 7
+      },
+      {
+        "string": 5,
+        "fret": 3
+      }
+    ]
+  }
+]
+*/
+
+export const groupByPosition = (assignTabValuesArr) => {
+  return assignTabValuesArr.reduce((acc, curr) => {
+    const tabPosition = curr.tabPosition.sort((a, b) => a.fret - b.fret);
+    acc.push({...curr, tabPosition: tabPosition[0]});
+    return acc;
+  }, []);
+};
+
+// export const findAveragePosition = (assignTabValuesArr) => {
+//   let total = 0;
+//   let sets = 0;
+//   assignTabValuesArr.forEach(notes => {
+//     notes.tabPosition.forEach(pos => {
+//       sets += 1;
+//       total += pos.fret;
+//     })
+//   });
+//   return {
+//     total,
+//     sets,
+//   }
+// };
+
+/* Sample input for groupByString()
+
+[
+  {
+    "activeNoteLength": 16,
+    "pitch": {
+      "A": 0
+    },
+    "closestBeatX": 40,
+    "tabPositions": {
+      "string": 2,
+      "fret": 0
+    }
+  },
+  {
+    "activeNoteLength": 16,
+    "pitch": {
+      "B": 2
+    },
+    "closestBeatX": 200,
+    "tabPositions": {
+      "string": 6,
+      "fret": 7
+    }
+  },
+  {
+    "activeNoteLength": 16,
+    "pitch": {
+      "F#": 0
+    },
+    "closestBeatX": 360,
+    "tabPositions": {
+      "string": 1,
+      "fret": 2
+    }
+  },
+  {
+    "activeNoteLength": 8,
+    "pitch": {
+      "G#": 1
+    },
+    "closestBeatX": 520,
+    "tabPositions": {
+      "string": 3,
+      "fret": 6
+    }
+  },
+  {
+    "activeNoteLength": 8,
+    "pitch": {
+      "D": 1
+    },
+    "closestBeatX": 600,
+    "tabPositions": {
+      "string": 5,
+      "fret": 3
+    }
+  }
+]
+*/
+
+export const groupByString = (groupByStringArr) => {
+  let stringData = {
+    1: [],
+    2: [],
+    3: [],
+    4: [],
+    5: [],
+    6: [],
+  };
+  groupByStringArr.forEach(item => {
+    if(stringData[item.tabPosition.string]) {
+      stringData[item.tabPosition.string].push(item)
+      }
+  });
+  return stringData;
+};
+
+/* Sample input for buildAsciTable()
+{
+  "1": [
+    {
+      "activeNoteLength": 16,
+      "pitch": {
+        "F#": 0
+      },
+      "closestBeatX": 360,
+      "tabPositions": {
+        "string": 1,
+        "fret": 2
+      }
+    }
+  ],
+  "2": [
+    {
+      "activeNoteLength": 16,
+      "pitch": {
+        "A": 0
+      },
+      "closestBeatX": 40,
+      "tabPositions": {
+        "string": 2,
+        "fret": 0
+      }
+    }
+  ],
+  "3": [
+    {
+      "activeNoteLength": 8,
+      "pitch": {
+        "G#": 1
+      },
+      "closestBeatX": 520,
+      "tabPositions": {
+        "string": 3,
+        "fret": 6
+      }
+    }
+  ],
+  "4": [],
+  "5": [
+    {
+      "activeNoteLength": 8,
+      "pitch": {
+        "D": 1
+      },
+      "closestBeatX": 600,
+      "tabPositions": {
+        "string": 5,
+        "fret": 3
+      }
+    }
+  ],
+  "6": [
+    {
+      "activeNoteLength": 16,
+      "pitch": {
+        "B": 2
+      },
+      "closestBeatX": 200,
+      "tabPositions": {
+        "string": 6,
+        "fret": 7
+      }
+    }
+  ]
+}
+*/
+
+export const buildAsciTable = (groupedByStringsArr) => {
+  return Object.values(groupedByStringsArr).reduce((acc, string) => {
+    let stringOutput = '';
+    for (let i = 1; i < 65; i++) {
+      const cord = i*10;
+      if(string.length === 0) {
+        stringOutput += '-';
+      } else {
+        const item = string.find(note => note.closestBeatX === cord);
+        if (item) {
+          stringOutput += item.tabPosition.fret;
+        } else {
+          stringOutput += '-';
+        }
+      }
+    }
+    acc.push(stringOutput);
+    return acc;
+  }, []).reverse();
 };
