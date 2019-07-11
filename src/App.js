@@ -12,7 +12,6 @@ import { staves,
 const canvasHeight = 440;
 const canvasWidth = 640;
 const barWidthPadding = canvasWidth / 16;
-const tolerance = 5;
 const baseNoteSize = 18;
 
 class App extends React.Component {
@@ -29,12 +28,16 @@ class App extends React.Component {
       saveActive: false,
       isTripletMode: false,
       isNotesToggle: true,
+      lowerBoundValue: 0,
+      upperBoundValue: 5,
     };
     this.canvasRef = React.createRef();
     this.linepointNearestMouse = this.linepointNearestMouse.bind(this);
     this.handleMouseMove = this.handleMouseMove.bind(this);
     this.saveNote = this.saveNote.bind(this);
     this.buildTable = this.buildTable.bind(this);
+    this.updateLowerBound = this.updateLowerBound.bind(this);
+    this.updateUpperBound = this.updateUpperBound.bind(this);
 
     this.beatLineCords = null;
 
@@ -241,11 +244,6 @@ class App extends React.Component {
     }
   }
 
-  setTriplet() {
-    console.log('setTriplet!');
-    this.setState({isTripletMode: true});
-  }
-
   toggleNotesRests() {
     this.setState(prevState => ({
       isNotesToggle: !prevState.isNotesToggle
@@ -253,16 +251,18 @@ class App extends React.Component {
   }
   
   buildTable() {
-    const {savedNotesArr} = this.state;
+    const {savedNotesArr, upperBoundValue, lowerBoundValue} = this.state;
     const schema = savedNotesArr.reduce((acc, curr) => {
       acc.push({
         activeNoteLength: curr.activeNoteLength,
         pitch: curr.closestStave.note,
-        closestBeatX: curr.closestBeatX
+        closestBeatX: curr.closestBeatX,
+        upperBoundValue,
+        lowerBoundValue
       });
       return acc;
     }, []);
-    const mutatedToKeyOfA = mutateNotesToActiveKey(schema, 'C');
+    const mutatedToKeyOfA = mutateNotesToActiveKey(schema, 'A');
 
     console.log('1. mutatedToKeyOfA', mutatedToKeyOfA);
 
@@ -284,25 +284,17 @@ class App extends React.Component {
 
   }
 
-  render() {
-    // const returnBtns = () => {
-    //   let counter = this.state.maxAmountNoteValue;
-    //   let items = [];
-    //   while(counter % 2 === 0) {
-    //     items.push(
-    //       <div style={{
-    //         alignSelf: 'center',
-    //         border: '1px solid red',
-    //         padding: '0.5rem',
-    //         cursor: 'pointer',
-    //         margin: '0.25rem',
-    //       }} onClick={() => this.setNoteValue(64)}>Whole</div>
-    //     );
-    //     counter = counter / 2;
-    //   }
-    // }
+  updateLowerBound(e) {
+    this.setState({lowerBoundValue: e.target.value});
+  }
 
-    const { isNotesToggle } = this.state;
+  updateUpperBound(e) {
+    this.setState({upperBoundValue: e.target.value});
+  }
+
+  render() {
+
+    const { isNotesToggle, lowerBoundValue, upperBoundValue } = this.state;
 
     return (
       <div className="App">
@@ -315,6 +307,8 @@ class App extends React.Component {
           onMouseMove={this.handleMouseMove.bind(this)}
           onClick={this.saveNote.bind(this)}
           ></canvas>
+          <input onChange={this.updateLowerBound} value={lowerBoundValue} placeholder='lower bound' />
+          <input onChange={this.updateUpperBound} value={upperBoundValue} placeholder='upper bound' />
           <div style={{
             marginTop: '1rem',
             display: 'flex',

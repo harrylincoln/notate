@@ -249,8 +249,14 @@ export const assignTabValues = (mutatedNotesArr) => {
 
 export const groupByPosition = (assignTabValuesArr) => {
   return assignTabValuesArr.reduce((acc, curr) => {
-    const tabPosition = curr.tabPosition.sort((a, b) => a.fret - b.fret);
-    acc.push({...curr, tabPosition: tabPosition[0]});
+    console.log('curr lower', curr.lowerBoundValue);
+    console.log('curr upper', curr.upperBoundValue);
+    // const tabPosition = curr.tabPosition.sort((a, b) => a.fret - b.fret);
+
+    const tabPositionWithBounds = 
+    curr.tabPosition.sort((a, b) => a.fret - b.fret)
+    .filter(pos => pos.fret > curr.lowerBoundValue && pos.fret < curr.upperBoundValue);
+    acc.push({...curr, tabPosition: tabPositionWithBounds[0]});
     return acc;
   }, []);
 };
