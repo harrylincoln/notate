@@ -1,13 +1,13 @@
 /* eslint-disable no-loop-func */
 import {positions} from './positions';
 
-const originalEntry = [
-  {activeNoteLength: 16, pitch: {A:0}, closestBeatX: 50},  // quaver
-  {activeNoteLength: 16, pitch: {B:2}, closestBeatX: 250}, // quaver
-  {activeNoteLength: 16, pitch: {F:0}, closestBeatX: 450}, // quaver
-  {activeNoteLength: 8,  pitch: {G:1}, closestBeatX: 650}, // semi-quaver
-  {activeNoteLength: 8,  pitch: {D:1}, closestBeatX: 750}, // semi-quaver
-];
+// const originalEntry = [
+//   {activeNoteLength: 16, pitch: {A:0}, closestBeatX: 50},  // quaver
+//   {activeNoteLength: 16, pitch: {B:2}, closestBeatX: 250}, // quaver
+//   {activeNoteLength: 16, pitch: {F:0}, closestBeatX: 450}, // quaver
+//   {activeNoteLength: 8,  pitch: {G:1}, closestBeatX: 650}, // semi-quaver
+//   {activeNoteLength: 8,  pitch: {D:1}, closestBeatX: 750}, // semi-quaver
+// ];
 
 export let staves = {
     map: [

@@ -8,7 +8,7 @@
   pointer-events: none;
 }
 
-.App-header {
+.App-content {
   background-color: #282c34;
   min-height: 100vh;
   display: flex;
@@ -21,6 +21,25 @@
 
 .App-link {
   color: #61dafb;
+}
+
+.App-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.App-nav-list {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  list-style: none;
+  width: 100%;
+}
+.flx {
+  display: flex;
 }
 
 @keyframes App-logo-spin {
