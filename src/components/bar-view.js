@@ -24,12 +24,8 @@ class BarView extends React.Component {
       ifSavedNotes: false,
       saveActive: false,
       isTripletMode: false,
-      isNotesToggle: true,
       lowerBoundValue: 0,
       upperBoundValue: 12,
-      userKey: props,
-      appLoading: true,
-      userData: null,
     };
     this.canvasRef = React.createRef();
     this.linepointNearestMouse = this.linepointNearestMouse.bind(this);
@@ -38,12 +34,21 @@ class BarView extends React.Component {
     this.buildTable = this.buildTable.bind(this);
     this.updateLowerBound = this.updateLowerBound.bind(this);
     this.updateUpperBound = this.updateUpperBound.bind(this);
-    this.updateUserNavigation = this.updateUserNavigation.bind(this);
     this.beatLineCords = null;
 
   }
 
+  componentWillMount() {
+      // populate savedNotesArr from localStorage if needed
+
+      const localStorageSavedNotesArr = this.props.userData.savedNotesArr
+      if(localStorageSavedNotesArr) {
+          this.setState({savedNotesArr: localStorageSavedNotesArr})
+      }
+  }
+
   componentDidMount() {
+    // update 
     this.reCalcBeatLineCords();
     this.draw(); // init
   }
@@ -243,12 +248,6 @@ class BarView extends React.Component {
       }
     }
   }
-
-  toggleNotesRests() {
-    this.setState(prevState => ({
-      isNotesToggle: !prevState.isNotesToggle
-    }));
-  }
   
   buildTable() {
     const {savedNotesArr, upperBoundValue, lowerBoundValue} = this.state;
@@ -292,16 +291,9 @@ class BarView extends React.Component {
     this.setState({upperBoundValue: e.target.value});
   }
 
-  updateUserNavigation(direction) {
-    let userData = {...this.state.userData};
-    direction === '+' ? userData.appStep += 1 : userData.appStep += -1;
-    this.setState({userData});
-  }
-
   render() {
 
-    const { 
-      isNotesToggle, 
+    const {  
       lowerBoundValue, 
       upperBoundValue,
     } = this.state;
@@ -328,70 +320,97 @@ class BarView extends React.Component {
               padding: '1rem',
               color: 'black',
             }}>
+            <p style={{
+                alignSelf: 'center',
+                color: 'white',
+                cursor:'pointer',
+                }}>Notes:</p>
+                <div style={{
+                  alignSelf: 'center',
+                  border: '1px solid red',
+                  padding: '0.5rem',
+                  cursor: 'pointer',
+                  margin: '0.25rem',
+                }} onClick={() => this.setNoteValue(64)}>1/1</div>
+                <div style={{
+                  alignSelf: 'center',
+                  border: '1px solid red',
+                  padding: '0.5rem',
+                  cursor: 'pointer',
+                  margin: '0.25rem',
+                }} onClick={() => this.setNoteValue(32)}>1/2</div>
+                <div style={{
+                  alignSelf: 'center',
+                  border: '1px solid red',
+                  padding: '0.5rem',
+                  cursor: 'pointer',
+                  margin: '0.25rem',
+                }} onClick={() => this.setNoteValue(16)}>1/4</div>
+                <div style={{
+                  alignSelf: 'center',
+                  border: '1px solid red',
+                  padding: '0.5rem',
+                  cursor: 'pointer',
+                  margin: '0.25rem',
+                }} onClick={() => this.setNoteValue(8)}>1/8</div>
+                <div style={{
+                  alignSelf: 'center',
+                  border: '1px solid red',
+                  padding: '0.5rem',
+                  cursor: 'pointer',
+                  margin: '0.25rem',
+                }} onClick={() => this.setNoteValue(4)}>1/16</div>
+                <div style={{
+                  alignSelf: 'center',
+                  border: '1px solid red',
+                  padding: '0.5rem',
+                  cursor: 'pointer',
+                  margin: '0.25rem',
+                }} onClick={() => this.setNoteValue(2)}>1/32</div>
+                <div style={{
+                  alignSelf: 'center',
+                  border: '1px solid red',
+                  padding: '0.5rem',
+                  cursor: 'pointer',
+                  margin: '0.25rem',
+                }} onClick={() => this.setNoteValue(1)}>1/64</div>
+                <div style={{
+                  alignSelf: 'center',
+                  border: '1px solid red',
+                  padding: '0.5rem',
+                  cursor: 'pointer',
+                  margin: '0.25rem',
+                }} onClick={() => this.buildTable()}>Print</div>
+            </div>
+            <div style={{
+              marginTop: '1rem',
+              display: 'flex',
+              width: '50%',
+              flexDirection: 'row',
+              flexWrap: 'wrap',
+              backgroundColor: 'grey',
+              padding: '1rem',
+              color: 'black',
+            }}>
                 <p style={{
-                  alignSelf: 'center',
-                  color: 'white',
-                  cursor:'pointer',
-                  }}
-                  onClick={() => this.toggleNotesRests()}
-              
-              >{isNotesToggle ? 'Notes: ' : 'Rests: '}</p>
+                    alignSelf: 'center',
+                    color: 'white',
+                    cursor:'pointer',
+                    }}>Overrides:</p>
                 <div style={{
                   alignSelf: 'center',
                   border: '1px solid red',
                   padding: '0.5rem',
                   cursor: 'pointer',
                   margin: '0.25rem',
-                }} onClick={() => this.setNoteValue(64)}>Whole</div>
+                }} >&#9837;</div>
                 <div style={{
                   alignSelf: 'center',
                   border: '1px solid red',
                   padding: '0.5rem',
                   cursor: 'pointer',
                   margin: '0.25rem',
-                }} onClick={() => this.setNoteValue(32)}>Half</div>
-                <div style={{
-                  alignSelf: 'center',
-                  border: '1px solid red',
-                  padding: '0.5rem',
-                  cursor: 'pointer',
-                  margin: '0.25rem',
-                }} onClick={() => this.setNoteValue(16)}>Quarter</div>
-                <div style={{
-                  alignSelf: 'center',
-                  border: '1px solid red',
-                  padding: '0.5rem',
-                  cursor: 'pointer',
-                  margin: '0.25rem',
-                }} onClick={() => this.setNoteValue(8)}>Eighth</div>
-                <div style={{
-                  alignSelf: 'center',
-                  border: '1px solid red',
-                  padding: '0.5rem',
-                  cursor: 'pointer',
-                  margin: '0.25rem',
-                }} onClick={() => this.setNoteValue(4)}>Sixteenth</div>
-                <div style={{
-                  alignSelf: 'center',
-                  border: '1px solid red',
-                  padding: '0.5rem',
-                  cursor: 'pointer',
-                  margin: '0.25rem',
-                }} onClick={() => this.setNoteValue(2)}>Thirty Second</div>
-                <div style={{
-                  alignSelf: 'center',
-                  border: '1px solid red',
-                  padding: '0.5rem',
-                  cursor: 'pointer',
-                  margin: '0.25rem',
-                }} onClick={() => this.setNoteValue(1)}>Sixty Fourth</div>
-                <div style={{
-                  alignSelf: 'center',
-                  border: '1px solid red',
-                  padding: '0.5rem',
-                  cursor: 'pointer',
-                  margin: '0.25rem',
-                }} onClick={() => this.buildTable()}>Console.log(asci table)</div>
+                }}>#</div>
             </div>
             </section>
       );

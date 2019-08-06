@@ -42,7 +42,8 @@ class App extends React.Component {
   }
 
   updateUserData(data) {
-    console.log('updateUserData called!');
+    console.log('updateUserData called!--->', data);
+    this.setState({userData: data});
   }
 
   render() {
@@ -56,9 +57,9 @@ class App extends React.Component {
         <div className="App">
           <nav className="App-nav">
             <ul className="App-nav-list">
-            <li onClick={() => this.updateUserNavigation('-')} className="flx alignItemsStart">Back</li>
-            <li>Active key: {userKey}</li>
-            <li onClick={() => this.updateUserNavigation('+')} className="flx alignItemsEnd">Next</li>
+              <li onClick={() => this.updateUserNavigation('-')}>Back</li>
+              <li>Active key: {userKey}</li>
+              <li onClick={() => this.updateUserNavigation('+')}>Next</li>
             </ul>
           </nav>
           {userData.appStep === 0 ? (
@@ -69,7 +70,7 @@ class App extends React.Component {
               <button onClick={() => this.updateUserNavigation('+')}>Next Step</button>
             </section>
           ) : (
-            <BarView userKey={userKey} updateUserData={this.updateUserData}/>
+            <BarView userKey={userKey} updateUserData={this.updateUserData} userData={userData}/>
           )}
         </div>
         </>
