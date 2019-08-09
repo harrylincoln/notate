@@ -110,18 +110,30 @@ class BarView extends React.Component {
 
       // accidentals
       if(note.accidentalOverride) {
+        ctx.beginPath();
         switch (note.accidentalOverride) {
           case 'flat':
-            
-            break;
+              const flatScale = 8; // increase when more flags
+              const flatPosX = (note.closestBeatX - (flatScale * 7)) + note.baseNoteSize;
+              const flatPosYStart = note.lineY;
+              const flatPosYEnd = flatPosYStart - (note.baseNoteSize);
 
+
+              ctx.moveTo(flatPosX - 5, flatPosYStart);
+              ctx.lineTo(flatPosX - 5, flatPosYEnd);
+              ctx.stroke();
+              ctx.moveTo(flatPosX, flatPosYStart);
+              ctx.ellipse(flatPosX, flatPosYStart, (note.baseNoteSize / flatScale), (note.baseNoteSize / 3), Math.PI / 3, 0, 2 * Math.PI);
+              ctx.stroke();
+
+            break;
           case 'sharp':
           
             break;
-        
           default:
             break;
         }
+        ctx.closePath();
       }
       
       // stems & flags
@@ -313,12 +325,7 @@ class BarView extends React.Component {
 
   assignAccidental(type) {
     const { accidentalOverride } = this.state;
-
-    if(accidentalOverride === type) {
-      this.setState({accidentalOverride: false});  
-    } else {
-      this.setState({accidentalOverride: type});
-    }
+    this.setState({accidentalOverride: accidentalOverride === type ? false : type});
   }
 
   render() {
@@ -427,7 +434,14 @@ class BarView extends React.Component {
                     alignSelf: 'center',
                     color: 'white',
                     cursor:'pointer',
-                    }}>Accidentals (avoid doubles - know your key!):</p>
+                    }}>Accidentals (avoid plotting doubles - know your key!):</p>
+                <div style={{
+                  alignSelf: 'center',
+                  border: `1px solid ${accidentalOverride === 'natural'? 'red' : 'white'}`,
+                  padding: '0.5rem',
+                  cursor: 'pointer',
+                  margin: '0.25rem',
+                }} onClick={() => this.assignAccidental('natural')}>&#9838;</div>
                 <div style={{
                   alignSelf: 'center',
                   border: `1px solid ${accidentalOverride === 'flat'? 'red' : 'white'}`,

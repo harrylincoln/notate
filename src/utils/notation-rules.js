@@ -101,6 +101,9 @@ export const mutateNotesToActiveKey = (notesArr, activeKey) => {
 
       if(accidentalOverride) {
         switch (accidentalOverride) {
+          case 'natural':
+            noteCase = 0;
+            break;
           case 'sharp':
             noteCase = 1;
             break;
