@@ -26,6 +26,7 @@ class BarView extends React.Component {
       isTripletMode: false,
       lowerBoundValue: 0,
       upperBoundValue: 12,
+      accidentalOverride: false,
     };
     this.canvasRef = React.createRef();
     this.linepointNearestMouse = this.linepointNearestMouse.bind(this);
@@ -34,6 +35,7 @@ class BarView extends React.Component {
     this.buildTable = this.buildTable.bind(this);
     this.updateLowerBound = this.updateLowerBound.bind(this);
     this.updateUpperBound = this.updateUpperBound.bind(this);
+    this.assignAccidental = this.assignAccidental.bind(this);
     this.beatLineCords = null;
 
   }
@@ -105,6 +107,22 @@ class BarView extends React.Component {
         ctx.fill();
       }
       ctx.closePath();
+
+      // accidentals
+      if(note.accidentalOverride) {
+        switch (note.accidentalOverride) {
+          case 'flat':
+            
+            break;
+
+          case 'sharp':
+          
+            break;
+        
+          default:
+            break;
+        }
+      }
       
       // stems & flags
       if(denomination > 1) {
@@ -170,7 +188,7 @@ class BarView extends React.Component {
   }
 
   async draw(mouseX, mouseY, closestBeatX, lineY, closestStave){
-    const { activeNoteLength, ifSavedNotes, savedNotesArr } = this.state;
+    const { activeNoteLength, ifSavedNotes, savedNotesArr, accidentalOverride } = this.state;
     const ctx = this.canvasRef.current.getContext('2d');
 
     // default
@@ -192,6 +210,7 @@ class BarView extends React.Component {
           baseNoteSize,
           activeNoteLength,
           closestStave,
+          accidentalOverride
         };
 
         await this.saveActiveNoteToState(activeNoteInfo);
@@ -253,6 +272,7 @@ class BarView extends React.Component {
     const {savedNotesArr, upperBoundValue, lowerBoundValue} = this.state;
     const schema = savedNotesArr.reduce((acc, curr) => {
       acc.push({
+        accidentalOverride: curr.accidentalOverride,
         activeNoteLength: curr.activeNoteLength,
         pitch: curr.closestStave.note,
         closestBeatX: curr.closestBeatX,
@@ -291,11 +311,22 @@ class BarView extends React.Component {
     this.setState({upperBoundValue: e.target.value});
   }
 
+  assignAccidental(type) {
+    const { accidentalOverride } = this.state;
+
+    if(accidentalOverride === type) {
+      this.setState({accidentalOverride: false});  
+    } else {
+      this.setState({accidentalOverride: type});
+    }
+  }
+
   render() {
 
     const {  
       lowerBoundValue, 
       upperBoundValue,
+      accidentalOverride
     } = this.state;
 
       return (
@@ -396,21 +427,21 @@ class BarView extends React.Component {
                     alignSelf: 'center',
                     color: 'white',
                     cursor:'pointer',
-                    }}>Overrides:</p>
+                    }}>Accidentals (avoid doubles - know your key!):</p>
                 <div style={{
                   alignSelf: 'center',
-                  border: '1px solid red',
+                  border: `1px solid ${accidentalOverride === 'flat'? 'red' : 'white'}`,
                   padding: '0.5rem',
                   cursor: 'pointer',
                   margin: '0.25rem',
-                }} >&#9837;</div>
+                }} onClick={() => this.assignAccidental('flat')}>&#9837;</div>
                 <div style={{
                   alignSelf: 'center',
-                  border: '1px solid red',
+                  border: `1px solid ${accidentalOverride === 'sharp' ? 'red' : 'white'}`,
                   padding: '0.5rem',
                   cursor: 'pointer',
                   margin: '0.25rem',
-                }}>#</div>
+                }} onClick={() => this.assignAccidental('sharp')}>#</div>
             </div>
             </section>
       );

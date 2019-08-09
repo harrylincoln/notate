@@ -13,15 +13,15 @@ export let staves = {
     map: [
       {x0:0,y0:0,x1:800,y1:0, ledger: [-5,-3, 1], note: {F: 3}},
       {x0:0,y0:20,x1:800,y1:20, ledger: [-4,-2, 0], note: {E: 3}},
-      {x0:0,y0:40,x1:800,y1:40, ledger: [-3,-1], note: {D: 3}},
-      {x0:0,y0:60,x1:800,y1:60, ledger: [-2,0], note: {C: 3}},
+      {x0:0,y0:40,x1:800,y1:40, ledger: [-3,-1], note: {D: 2}},
+      {x0:0,y0:60,x1:800,y1:60, ledger: [-2,0], note: {C: 2}},
       {x0:0,y0:80,x1:800,y1:80, ledger: [-1], note: {B: 2}},
       {x0:0,y0:100,x1:800,y1:100, ledger: [0], note: {A: 2}},
       {x0:0,y0:120,x1:800,y1:120, note: {G: 2}},
       {x0:0,y0:140,x1:800,y1:140, draw: true, note: {F: 2}},
       {x0:0,y0:160,x1:800,y1:160, note: {E: 2}},
-      {x0:0,y0:180,x1:800,y1:180, draw: true, note: {D: 2}},
-      {x0:0,y0:200,x1:800,y1:200, note: {C: 2}},
+      {x0:0,y0:180,x1:800,y1:180, draw: true, note: {D: 1}},
+      {x0:0,y0:200,x1:800,y1:200, note: {C: 1}},
       {x0:0,y0:220,x1:800,y1:220, draw: true, note: {B: 1}},
       {x0:0,y0:240,x1:800,y1:240, note: {A: 1}},
       {x0:0,y0:260,x1:800,y1:260, draw: true, note: {G: 1}},
@@ -95,19 +95,34 @@ export const mutateNotesToActiveKey = (notesArr, activeKey) => {
   const mapper = circleOfFifths[activeKey];
 
   return notesArr.reduce((acc, curr) => {
-      const idxToSearchMapper = dicMapping[Object.keys(curr.pitch)];
-      switch (mapper[idxToSearchMapper]) {
+      const { accidentalOverride, pitch } = curr;
+      const idxToSearchMapper = dicMapping[Object.keys(pitch)];
+      let noteCase = mapper[idxToSearchMapper];
+
+      if(accidentalOverride) {
+        switch (accidentalOverride) {
+          case 'sharp':
+            noteCase = 1;
+            break;
+          case 'flat':
+            noteCase = 2;
+            break;
+          default:
+            break;
+        }
+      }
+      switch (noteCase) {
         case 1:
           acc.push({...curr, 
             pitch: {
-              [`${Object.keys(curr.pitch)}#`]: Object.values(curr.pitch)[0]
+              [`${Object.keys(pitch)}#`]: Object.values(pitch)[0]
             } 
           })
           break;
         case 2:
           acc.push({...curr, 
             pitch: {
-              [`${Object.keys(curr.pitch)}b`]: Object.values(curr.pitch)[0]
+              [`${Object.keys(pitch)}b`]: Object.values(pitch)[0]
             } 
           })
           break;
