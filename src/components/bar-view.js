@@ -28,7 +28,8 @@ class BarView extends React.Component {
       isTripletMode: false,
       lowerBoundValue: 0,
       upperBoundValue: 12,
-      accidentalOverride: 'natural',
+      accidentalOverride: false,
+      shadowUserData: {},
     };
     this.canvasRef = React.createRef();
     this.linepointNearestMouse = this.linepointNearestMouse.bind(this);
@@ -38,21 +39,67 @@ class BarView extends React.Component {
     this.updateLowerBound = this.updateLowerBound.bind(this);
     this.updateUpperBound = this.updateUpperBound.bind(this);
     this.assignAccidental = this.assignAccidental.bind(this);
+    this.updateBarNumber = this.updateBarNumber.bind(this);
     this.beatLineCords = null;
-
   }
 
-  componentWillMount() {
-      // populate savedNotesArr from localStorage if needed
+  // updateShadowData(data) {
+  //   this.setState({
+  //     shadowUserData: {
+  //       ...this.state.shadowUserData,
+  //       data
+  //     }
+  //   })
+  // }
 
-      const localStorageSavedNotesArr = this.props.userData.savedNotesArr
+  updateBarNumber(op) {
+
+    switch (op) {
+      case '+':
+        this.setState({
+          shadowUserData: {
+            ...this.state.shadowUserData,
+            activeBarNumber: this.state.shadowUserData.activeBarNumber + 1
+          }
+        }, () => {
+          this.props.updateUserData(this.state.shadowUserData);  
+        });
+        break;
+      case '-':
+          this.setState({
+            shadowUserData: {
+              ...this.state.shadowUserData,
+              activeBarNumber: this.state.shadowUserData.activeBarNumber - 1
+            }
+          }, () => {
+            this.props.updateUserData(this.state.shadowUserData);  
+          });
+          break;
+    
+      default: // first time
+        this.setState({shadowUserData: {
+          activeBarNumber: 1
+        }});
+        this.props.updateUserData({activeBarNumber: 1})
+        break;
+    }
+  }
+
+
+
+  componentWillMount() {
+
+      this.updateBarNumber();
+      
+      // populate savedNotesArr from localStorage if needed
+      const localStorageSavedNotesArr = this.props.userData.savedNotesArr;
       if(localStorageSavedNotesArr) {
           this.setState({savedNotesArr: localStorageSavedNotesArr})
       }
   }
 
   componentDidMount() {
-    // update 
+    // update
     this.reCalcBeatLineCords();
     this.draw(); // init
   }
@@ -97,19 +144,17 @@ class BarView extends React.Component {
   }
 
   async draw(mouseX, mouseY, closestBeatX, lineY, closestStave){
-    const { activeNoteLength, ifSavedNotes, savedNotesArr, accidentalOverride, maxAmountNoteValue } = this.state;
+    const { activeNoteLength, ifSavedNotes, savedNotesArr, accidentalOverride, maxAmountNoteValue, shadowUserData } = this.state;
     const ctx = this.canvasRef.current.getContext('2d');
-
     // default
     ctx.clearRect(0,0,canvasWidth,canvasHeight);
     await this.drawStaves();
     
-
     if(mouseX && closestBeatX){
 
         // draw saved
         if(ifSavedNotes) {
-          await drawNotes(savedNotesArr, ctx, maxAmountNoteValue);
+          await drawNotes(savedNotesArr[shadowUserData.activeBarNumber] || [], ctx, maxAmountNoteValue);
         }
         
         // non-saved hover note
@@ -159,17 +204,22 @@ class BarView extends React.Component {
   }
   
   saveActiveNoteToState(ctxCords) {
-    const {activeBeatIdx, savedNotesArr, saveActive} = this.state;
+    const {activeBeatIdx, savedNotesArr, saveActive, shadowUserData} = this.state;
+    console.log('savedNotesArr', savedNotesArr.length);
     if(saveActive) {
-      if(!savedNotesArr.length) { // first
+      if(Object.keys(savedNotesArr).length === 0) { // first
           this.setState(prevState => ({
-            savedNotesArr: [...prevState.savedNotesArr, ctxCords],
+            savedNotesArr: {
+             1: [...prevState.savedNotesArr, ctxCords]
+            },
             saveActive: false,
           }))
       } 
       else {
           this.setState(prevState => ({
-            savedNotesArr: [...prevState.savedNotesArr, ctxCords],
+            savedNotesArr: {
+              [shadowUserData.activeBarNumber]: [...prevState.savedNotesArr[shadowUserData.activeBarNumber], ctxCords]
+            },
             activeBeatIdx: activeBeatIdx + 1,
             saveActive: false,
           }));
@@ -178,8 +228,8 @@ class BarView extends React.Component {
   }
   
   buildTable() {
-    const {savedNotesArr, upperBoundValue, lowerBoundValue} = this.state;
-    const schema = savedNotesArr.reduce((acc, curr) => {
+    const {savedNotesArr, upperBoundValue, lowerBoundValue, shadowUserData} = this.state;
+    const schema = savedNotesArr[shadowUserData.activeBarNumber].reduce((acc, curr) => {
       acc.push({
         accidentalOverride: curr.accidentalOverride,
         activeNoteLength: curr.activeNoteLength,
@@ -191,7 +241,7 @@ class BarView extends React.Component {
       return acc;
     }, []);
 
-    //try {
+    try {
       const mutatedToKey = mutateNotesToActiveKey(schema, this.props.userKey);
       console.log('1. mutatedToKey', mutatedToKey);
 
@@ -206,10 +256,9 @@ class BarView extends React.Component {
       
       const buildMarkupTable = buildAsciTable(groupByStringArr);
       console.log('5. buildMarkupTable', buildMarkupTable);
-    // } catch(e) {
-    //   console.log('building table error', e);
-    // }
-
+      } catch(e) {
+        console.log('building table error', e);
+      }
   }
 
   updateLowerBound(e) {
@@ -243,12 +292,19 @@ class BarView extends React.Component {
             onMouseMove={this.handleMouseMove.bind(this)}
             onClick={this.saveNote.bind(this)}
             ></canvas>
-            <input onChange={this.updateLowerBound} value={lowerBoundValue} placeholder='lower bound' />
-            <input onChange={this.updateUpperBound} value={upperBoundValue} placeholder='upper bound' />
+            <div style={{
+              display: 'flex',
+              flexDirection: 'row',
+              flexWrap: 'wrap',
+            }}>
+              <label style={{marginRight: '1rem'}} htmlFor="lower">Lower bound:</label>
+              <input style={{marginRight: '1rem'}} id="lower" onChange={this.updateLowerBound} value={lowerBoundValue} placeholder='lower bound' />
+              <label style={{marginRight: '1rem'}} htmlFor="upper">Upper bound:</label>
+              <input id="upper" onChange={this.updateUpperBound} value={upperBoundValue} placeholder='upper bound' />
+            </div>
             <div style={{
               marginTop: '1rem',
               display: 'flex',
-              width: '50%',
               flexDirection: 'row',
               flexWrap: 'wrap',
               backgroundColor: 'grey',
@@ -320,7 +376,6 @@ class BarView extends React.Component {
             <div style={{
               marginTop: '1rem',
               display: 'flex',
-              width: '50%',
               flexDirection: 'row',
               flexWrap: 'wrap',
               backgroundColor: 'grey',
