@@ -1,14 +1,6 @@
 /* eslint-disable no-loop-func */
 import {positions} from './positions';
 
-// const originalEntry = [
-//   {activeNoteLength: 16, pitch: {A:0}, closestBeatX: 50},  // quaver
-//   {activeNoteLength: 16, pitch: {B:2}, closestBeatX: 250}, // quaver
-//   {activeNoteLength: 16, pitch: {F:0}, closestBeatX: 450}, // quaver
-//   {activeNoteLength: 8,  pitch: {G:1}, closestBeatX: 650}, // semi-quaver
-//   {activeNoteLength: 8,  pitch: {D:1}, closestBeatX: 750}, // semi-quaver
-// ];
-
 export let staves = {
     map: [
       {x0:0,y0:0,x1:800,y1:0, ledger: [-5,-3, 1], note: {F: 3}},
@@ -41,10 +33,10 @@ export let staves = {
 
 /* array entries key:
     [0,0,0,0,0,0,0] = A->G
-    0 = none,
-    1 = #,
-    2 = b,
-    https://www.musicnotes.com/now/wp-content/uploads/Circle-of-Fifths-Simple-1024x1024.png
+    0 = none
+    1 = #
+    2 = b
+    eg. C major has no sharps or flats, hence [0,0,0,0,0,0,0]
 */
 const circleOfFifths = {
   'C':     [0,0,0,0,0,0,0],
@@ -267,12 +259,8 @@ export const assignTabValues = (mutatedNotesArr) => {
 
 export const groupByPosition = (assignTabValuesArr) => {
   return assignTabValuesArr.reduce((acc, curr) => {
-    console.log('curr lower', curr.lowerBoundValue);
-    console.log('curr upper', curr.upperBoundValue);
-    // const tabPosition = curr.tabPosition.sort((a, b) => a.fret - b.fret);
-
-    const tabPositionWithBounds = 
-    curr.tabPosition.sort((a, b) => a.fret - b.fret)
+    const tabPositionWithBounds = curr.tabPosition
+    .sort((a, b) => a.fret - b.fret)
     .filter(pos => pos.fret > curr.lowerBoundValue && pos.fret < curr.upperBoundValue);
     acc.push({...curr, tabPosition: tabPositionWithBounds[0]});
     return acc;

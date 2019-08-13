@@ -44,48 +44,59 @@ class BarView extends React.Component {
   }
 
   updateBarNumber(op) {
-    switch (op) {
-      case '+':
-        this.setState({
-          shadowUserData: {
-            ...this.state.shadowUserData,
-            activeBarNumber: this.state.shadowUserData.activeBarNumber + 1
-          }
-        }, () => {
-          this.props.updateUserData(this.state.shadowUserData);
-          this.draw();
-        });
-        break;
-      case '-':
+    if(typeof op === 'number') {
+      this.setState({
+        shadowUserData: {
+          ...this.state.shadowUserData,
+          activeBarNumber: op
+        }
+      }, () => {
+        this.props.updateUserData(this.state.shadowUserData);
+        this.draw();
+      });
+    } else {
+      switch (op) {
+        case '+':
           this.setState({
             shadowUserData: {
               ...this.state.shadowUserData,
-              activeBarNumber: this.state.shadowUserData.activeBarNumber - 1
+              activeBarNumber: this.state.shadowUserData.activeBarNumber + 1
             }
           }, () => {
             this.props.updateUserData(this.state.shadowUserData);
             this.draw();
           });
           break;
-    
-      default: // first time
-        this.setState({shadowUserData: {
-          activeBarNumber: 1
-        }});
-        this.props.updateUserData({activeBarNumber: 1})
-        break;
+        case '-':
+            this.setState({
+              shadowUserData: {
+                ...this.state.shadowUserData,
+                activeBarNumber: this.state.shadowUserData.activeBarNumber - 1
+              }
+            }, () => {
+              this.props.updateUserData(this.state.shadowUserData);
+              this.draw();
+            });
+            break;
+      
+        default: // first time
+          this.setState({shadowUserData: {
+            activeBarNumber: 1
+          }});
+          this.props.updateUserData({activeBarNumber: 1})
+          break;
+      }
     }
   }
 
   componentWillMount() {
       const { userData } = this.props;
-
       this.props.updateUserData({appStep: 1});
 
       if(userData.savedNotesArr) {
           this.setState({savedNotesArr: userData.savedNotesArr})
-      }      
-      
+      }
+
       userData.activeBarNumber ? this.updateBarNumber(userData.activeBarNumber) : this.updateBarNumber();
 
   }
@@ -196,7 +207,7 @@ class BarView extends React.Component {
   
   saveActiveNoteToState(ctxCords) {
     const {activeBeatIdx, savedNotesArr, saveActive, shadowUserData} = this.state;
-    console.log('savedNotesArr', savedNotesArr.length);
+
     if(saveActive) {
       if(Object.keys(savedNotesArr).length === 0) { // first
           this.setState(prevState => ({
@@ -208,7 +219,6 @@ class BarView extends React.Component {
       } 
       else {
           this.setState(prevState => {
-            console.log('prevState', prevState);
             return {
               savedNotesArr: {
                 ...prevState.savedNotesArr,
@@ -269,9 +279,9 @@ class BarView extends React.Component {
     this.setState({accidentalOverride: accidentalOverride === type ? false : type});
   }
 
-  advanceBar() {
-    const { savedNotesArr, shadowUserData, maxAmountNoteValue } = this.state;
-    this.updateBarNumber('+');
+  saveBarAndNavigate(direction) {
+    const { savedNotesArr } = this.state;
+    this.updateBarNumber(direction);
     this.props.updateUserData({savedNotesArr});
   }
 
@@ -409,7 +419,8 @@ class BarView extends React.Component {
                   cursor: 'pointer',
                   margin: '0.25rem',
                 }} onClick={() => this.assignAccidental('sharp')}>#</div>
-                <button onClick={() => this.advanceBar()}>Advance</button>
+                <button onClick={() => this.saveBarAndNavigate('-')}>Previous</button>
+                <button onClick={() => this.saveBarAndNavigate('+')}>Next</button>
             </div>
             </section>
       );
