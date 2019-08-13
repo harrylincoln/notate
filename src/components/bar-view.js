@@ -43,17 +43,7 @@ class BarView extends React.Component {
     this.beatLineCords = null;
   }
 
-  // updateShadowData(data) {
-  //   this.setState({
-  //     shadowUserData: {
-  //       ...this.state.shadowUserData,
-  //       data
-  //     }
-  //   })
-  // }
-
   updateBarNumber(op) {
-
     switch (op) {
       case '+':
         this.setState({
@@ -62,7 +52,8 @@ class BarView extends React.Component {
             activeBarNumber: this.state.shadowUserData.activeBarNumber + 1
           }
         }, () => {
-          this.props.updateUserData(this.state.shadowUserData);  
+          this.props.updateUserData(this.state.shadowUserData);
+          this.draw();
         });
         break;
       case '-':
@@ -72,7 +63,8 @@ class BarView extends React.Component {
               activeBarNumber: this.state.shadowUserData.activeBarNumber - 1
             }
           }, () => {
-            this.props.updateUserData(this.state.shadowUserData);  
+            this.props.updateUserData(this.state.shadowUserData);
+            this.draw();
           });
           break;
     
@@ -85,17 +77,17 @@ class BarView extends React.Component {
     }
   }
 
-
-
   componentWillMount() {
+      const { userData } = this.props;
 
-      this.updateBarNumber();
+      this.props.updateUserData({appStep: 1});
+
+      if(userData.savedNotesArr) {
+          this.setState({savedNotesArr: userData.savedNotesArr})
+      }      
       
-      // populate savedNotesArr from localStorage if needed
-      const localStorageSavedNotesArr = this.props.userData.savedNotesArr;
-      if(localStorageSavedNotesArr) {
-          this.setState({savedNotesArr: localStorageSavedNotesArr})
-      }
+      userData.activeBarNumber ? this.updateBarNumber(userData.activeBarNumber) : this.updateBarNumber();
+
   }
 
   componentDidMount() {
@@ -149,13 +141,12 @@ class BarView extends React.Component {
     // default
     ctx.clearRect(0,0,canvasWidth,canvasHeight);
     await this.drawStaves();
-    
-    if(mouseX && closestBeatX){
 
-        // draw saved
-        if(ifSavedNotes) {
-          await drawNotes(savedNotesArr[shadowUserData.activeBarNumber] || [], ctx, maxAmountNoteValue);
-        }
+    // draw saved
+    if(ifSavedNotes || savedNotesArr) {
+      await drawNotes(savedNotesArr[shadowUserData.activeBarNumber] || [], ctx, maxAmountNoteValue);
+    }
+    if(mouseX && closestBeatX){
         
         // non-saved hover note
         const activeNoteInfo = {
@@ -216,13 +207,17 @@ class BarView extends React.Component {
           }))
       } 
       else {
-          this.setState(prevState => ({
-            savedNotesArr: {
-              [shadowUserData.activeBarNumber]: [...prevState.savedNotesArr[shadowUserData.activeBarNumber], ctxCords]
-            },
-            activeBeatIdx: activeBeatIdx + 1,
-            saveActive: false,
-          }));
+          this.setState(prevState => {
+            console.log('prevState', prevState);
+            return {
+              savedNotesArr: {
+                ...prevState.savedNotesArr,
+                [shadowUserData.activeBarNumber]: [...prevState.savedNotesArr[shadowUserData.activeBarNumber] || [], ctxCords]
+              },
+              activeBeatIdx: activeBeatIdx + 1,
+              saveActive: false
+            }
+          });
       }
     }
   }
@@ -272,6 +267,12 @@ class BarView extends React.Component {
   assignAccidental(type) {
     const { accidentalOverride } = this.state;
     this.setState({accidentalOverride: accidentalOverride === type ? false : type});
+  }
+
+  advanceBar() {
+    const { savedNotesArr, shadowUserData, maxAmountNoteValue } = this.state;
+    this.updateBarNumber('+');
+    this.props.updateUserData({savedNotesArr});
   }
 
   render() {
@@ -408,6 +409,7 @@ class BarView extends React.Component {
                   cursor: 'pointer',
                   margin: '0.25rem',
                 }} onClick={() => this.assignAccidental('sharp')}>#</div>
+                <button onClick={() => this.advanceBar()}>Advance</button>
             </div>
             </section>
       );

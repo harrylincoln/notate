@@ -2,6 +2,7 @@ import './App.css';
 import React from 'react';
 import {
   retrieveUserData,
+  writeToUserData
 } from './utils/user-data';
 
 import BarView from './components/bar-view';
@@ -44,7 +45,7 @@ class App extends React.Component {
 
   updateUserData(data) {
     const userData = Object.assign(this.state.userData, data);
-    this.setState({userData});
+    this.setState({userData}, () => writeToUserData(userData));
   }
 
   render() {

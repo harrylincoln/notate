@@ -1,5 +1,5 @@
-export const retrieveUserData = () => window.localStorage.getItem('songData') ? JSON.parse(window.localStorage.getItem('songData')) : {
+export const retrieveUserData = () => window.localStorage.getItem('userData') ? JSON.parse(window.localStorage.getItem('userData')) : {
     appStep: 0
 };
 
-export const writeToSongData = (data) => window.localStorage.setItem('songData', JSON.stringify(data));
+export const writeToUserData = (data) => window.localStorage.setItem('userData', JSON.stringify(data));
