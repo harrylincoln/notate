@@ -14,7 +14,6 @@ class App extends React.Component {
     super(props);
 
     this.state = {
-      userKey: 'C',
       userData: null,
     };
     this.updateUserEnteredKey = this.updateUserEnteredKey.bind(this);
@@ -34,7 +33,9 @@ class App extends React.Component {
   }
 
   updateUserEnteredKey(e) {
-    this.setState({userKey: e.target.value});
+    let userData = {...this.state.userData};
+    userData.userKey = e.target.value;
+    this.setState({userData});
   }
 
   updateUserNavigation(direction) {
@@ -51,34 +52,32 @@ class App extends React.Component {
   render() {
 
     const { 
-      userData,
-      userKey
+      userData
     } = this.state;
       return (
         <>
         <div className="App">
           <nav className="App-nav">
             <ul className="App-nav-list">
-              <li onClick={() => this.updateUserNavigation('-')}>Back</li>
-              <li>Active key: {userKey}</li>
+              <li>Active key: {userData.userKey}</li>
               {userData.activeBarNumber && (
                 <li>Bar #: {userData.activeBarNumber}</li>
               )}
-              <li onClick={() => this.updateUserNavigation('+')}>Next</li>
             </ul>
           </nav>
-          {userData.appStep === 0 ? (
+          {userData.appStep === 0 && (
             <section className="App-content">
               <div className="cof-container">
                 <img src="./circle-of-fifths.jpg" alt="circle of fifths"/>
               </div>
               <h4>Choose a key (uppercase only)</h4>
-              <input onChange={this.updateUserEnteredKey} value={userKey} placeholder='C by default' />
+              <input onChange={this.updateUserEnteredKey} value={userData.userKey} placeholder='C by default' />
               <button onClick={() => this.updateUserNavigation('+')}>Next Step</button>
             </section>
-          ) : (
+          )}
+          {userData.appStep === 1 && (
             <BarView 
-            userKey={userKey} 
+            userKey={userData.userKey} 
             updateUserData={this.updateUserData} 
             userData={userData} />
           )}

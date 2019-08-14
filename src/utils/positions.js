@@ -153,6 +153,7 @@ export const positions = {
             {string: 1, fret: 17},
             {string: 2, fret: 12},
             {string: 3, fret: 7},
+            {string: 4, fret: 2},
         ],
         2: [
             {string: 3, fret: 19},
@@ -173,6 +174,7 @@ export const positions = {
             {string: 1, fret: 18},
             {string: 2, fret: 13},
             {string: 3, fret: 8},
+            {string: 4, fret: 3},
         ],
         2: [
             {string: 3, fret: 20},
@@ -193,6 +195,7 @@ export const positions = {
             {string: 1, fret: 18},
             {string: 2, fret: 13},
             {string: 3, fret: 8},
+            {string: 4, fret: 3},
         ],
         2: [
             {string: 3, fret: 20},
@@ -309,7 +312,8 @@ export const positions = {
     'D#': {
         0: [
             {string: 1, fret: 11},
-            {string: 2, fret: 6}
+            {string: 2, fret: 6},
+            {string: 3, fret: 1}
         ],
         1: [
             {string: 2, fret: 18},
@@ -326,7 +330,8 @@ export const positions = {
     'Eb': {
         0: [
             {string: 1, fret: 11},
-            {string: 2, fret: 6}
+            {string: 2, fret: 6},
+            {string: 3, fret: 1}
         ],
         1: [
             {string: 2, fret: 18},

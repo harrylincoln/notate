@@ -30,6 +30,7 @@ class BarView extends React.Component {
       upperBoundValue: 12,
       accidentalOverride: false,
       shadowUserData: {},
+      mergedBars: null,
     };
     this.canvasRef = React.createRef();
     this.linepointNearestMouse = this.linepointNearestMouse.bind(this);
@@ -218,54 +219,60 @@ class BarView extends React.Component {
           }))
       } 
       else {
-          this.setState(prevState => {
-            return {
+          this.setState(prevState => ({
               savedNotesArr: {
                 ...prevState.savedNotesArr,
                 [shadowUserData.activeBarNumber]: [...prevState.savedNotesArr[shadowUserData.activeBarNumber] || [], ctxCords]
               },
               activeBeatIdx: activeBeatIdx + 1,
               saveActive: false
-            }
-          });
+          }));
       }
     }
   }
   
   buildTable() {
-    const {savedNotesArr, upperBoundValue, lowerBoundValue, shadowUserData} = this.state;
+    const {savedNotesArr, upperBoundValue, lowerBoundValue} = this.state;
     
-    // TODO: loop here
-    const schema = savedNotesArr[shadowUserData.activeBarNumber].reduce((acc, curr) => {
-      acc.push({
-        accidentalOverride: curr.accidentalOverride,
-        activeNoteLength: curr.activeNoteLength,
-        pitch: curr.closestStave.note,
-        closestBeatX: curr.closestBeatX,
-        upperBoundValue,
-        lowerBoundValue
-      });
-      return acc;
-    }, []);
+    const mergedBars = Object.keys(savedNotesArr).reduce((mergedAcc, barNum) => {
 
-    try {
-      const mutatedToKey = mutateNotesToActiveKey(schema, this.props.userKey);
-      console.log('1. mutatedToKey', mutatedToKey);
+      const schema = savedNotesArr[barNum].reduce((acc, curr) => {
+        acc.push({
+          accidentalOverride: curr.accidentalOverride,
+          activeNoteLength: curr.activeNoteLength,
+          pitch: curr.closestStave.note,
+          closestBeatX: curr.closestBeatX,
+          upperBoundValue,
+          lowerBoundValue
+        });
+        return acc;
+      }, []);
 
-      const tabValuesAssigned = assignTabValues(mutatedToKey);
-      console.log('2. tabValuesAssigned', tabValuesAssigned);
+      try {
+        const mutatedToKey = mutateNotesToActiveKey(schema, this.props.userKey);
+        console.log('1. mutatedToKey', mutatedToKey);
 
-      const groupByPosistion = groupByPosition(tabValuesAssigned);
-      console.log('3. groupByPosistion', groupByPosistion);
+        const tabValuesAssigned = assignTabValues(mutatedToKey);
+        console.log('2. tabValuesAssigned', tabValuesAssigned);
 
-      const groupByStringArr = groupByString(groupByPosistion);
-      console.log('4. groupByString', groupByStringArr);
-      
-      const buildMarkupTable = buildAsciTable(groupByStringArr);
-      console.log('5. buildMarkupTable', buildMarkupTable);
-      } catch(e) {
-        console.log('building table error', e);
-      }
+        const groupByPosistion = groupByPosition(tabValuesAssigned);
+        console.log('3. groupByPosistion', groupByPosistion);
+
+        const groupByStringArr = groupByString(groupByPosistion);
+        console.log('4. groupByString', groupByStringArr);
+        
+        const buildMarkupTable = buildAsciTable(groupByStringArr);
+        console.log('5. buildMarkupTable', buildMarkupTable);
+
+        mergedAcc.push(buildMarkupTable);
+
+        } catch(e) {
+          console.log('building table error', e);
+        }
+        return mergedAcc;
+      }, []);
+      console.log('6.', mergedBars);
+      this.setState({mergedBars});
   }
 
   updateLowerBound(e) {
@@ -300,49 +307,97 @@ class BarView extends React.Component {
     ))
   }
 
+  clearBar() {
+    const {shadowUserData} = this.state;
+    this.setState(prevState => ({
+      savedNotesArr: {
+        ...prevState.savedNotesArr,
+        [shadowUserData.activeBarNumber]: []
+      },
+    }), () => {
+      const {savedNotesArr} = this.state;
+      this.props.updateUserData({savedNotesArr});
+      this.draw();
+    });
+  }
+
+  reset() {
+    this.setState({
+      savedNotesArr: [],
+      shadowUserData: {
+        activeBarNumber: 1
+      }
+    }, () => {
+      this.props.updateUserData({activeBarNumber: 1, appStep: 0, savedNotesArr: []});
+    })
+  }
+
   render() {
 
     const {  
       lowerBoundValue, 
       upperBoundValue,
-      accidentalOverride
+      accidentalOverride,
+      shadowUserData,
+      mergedBars,
     } = this.state;
 
       return (
+        <>
           <section className="App-content">
-            <canvas 
-            width={canvasWidth} 
-            height={canvasHeight} 
-            ref={this.canvasRef} 
-            onMouseMove={this.handleMouseMove.bind(this)}
-            onClick={this.saveNote.bind(this)}
-            ></canvas>
+            <div className="canvas-container">
+              <button disabled={shadowUserData.activeBarNumber < 2}
+              onClick={() => this.saveBarAndNavigate('-')}>Previous</button>
+              <canvas 
+              width={canvasWidth} 
+              height={canvasHeight} 
+              ref={this.canvasRef} 
+              onMouseMove={this.handleMouseMove.bind(this)}
+              onMouseLeave={this.draw.bind(this)}
+              onClick={this.saveNote.bind(this)}
+              ></canvas>
+              <button onClick={() => this.saveBarAndNavigate('+')}>Next</button>
+            </div>
             <div className="toggle-controls-container">
-              <label htmlFor="lower">Lower bound:</label>
+              <label htmlFor="lower">Fret # min:</label>
               <input id="lower" onChange={this.updateLowerBound} value={lowerBoundValue} placeholder='lower bound' />
-              <label htmlFor="upper">Upper bound:</label>
+              <label htmlFor="upper">Fret # max:</label>
               <input id="upper" onChange={this.updateUpperBound} value={upperBoundValue} placeholder='upper bound' />
             </div>
             <div className="toggle-controls-container">
               <p>Notes:</p>
               {this.RenderNoteToggles()}
-            </div>
-            <div className="toggle-controls-container">
-              <p>Accidentals (avoid plotting doubles - know your key!):</p>
-              <button style={{
+              <button  style={{
                 border: `1px solid ${accidentalOverride === 'natural'? 'red' : 'white'}`,
               }} onClick={() => this.assignAccidental('natural')}>&#9838;</button>
-              <button style={{
+              <button  style={{
                 border: `1px solid ${accidentalOverride === 'flat'? 'red' : 'white'}`,
               }} onClick={() => this.assignAccidental('flat')}>&#9837;</button>
-              <button style={{
+              <button  style={{
                 border: `1px solid ${accidentalOverride === 'sharp' ? 'red' : 'white'}`,
               }} onClick={() => this.assignAccidental('sharp')}>#</button>
-              <button onClick={() => this.saveBarAndNavigate('-')}>Previous</button>
-              <button onClick={() => this.saveBarAndNavigate('+')}>Next</button>
-              <button onClick={() => this.buildTable()}>Print</button>
+            </div>
+            <div className="toggle-controls-container">
+              <button onClick={() => this.clearBar()}>Clear bar</button>
+              <button onClick={() => this.reset()}>Reset</button>
+              <button onClick={() => this.buildTable()}>Generate tab below</button>
             </div>
             </section>
+          {mergedBars && (
+            <section className="App-content">
+            {mergedBars.map((bars, idx) => (
+              <>
+              {bars.map((bar, barIdx) => (
+                <>
+                {bar}<br/>
+                </>
+              ))}
+              <br />
+              </>
+            ))}
+            </section>
+          )}
+        </>
       );
     }
   };

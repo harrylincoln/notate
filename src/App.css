@@ -19,7 +19,19 @@
   color: white;
 }
 
-.App-content canvas {
+.App-content .canvas-container {
+  display: flex
+}
+
+.App-content button {
+  cursor: pointer
+}
+
+.App-content .canvas-container button:disabled {
+  cursor: not-allowed;
+}
+
+.App-content .canvas-container canvas {
   background-color: white
 }
 
@@ -33,12 +45,12 @@
 }
 
 .App-content .toggle-controls-container {
-  margin-top: 1rem;
+  margin-top: 0.5rem;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   background-color: grey;
-  padding: 1rem;
+  padding: 0.5rem;
   color: black;
 }
 
@@ -50,17 +62,13 @@
   align-self: center;
   color: white;
   cursor: pointer;
+  margin: 0;
 }
 
 .App-content .toggle-controls-container button {
   align-self: center;
-  border: 1px solid red;
   padding: 0.5rem;
   margin: 0.25rem;
-}
-
-.App-content .toggle-controls-container button:focus {
-  outline: none
 }
 
 .App-link {
@@ -76,13 +84,20 @@
 
 .App-nav-list {
   margin: 0;
-  padding: 0;
+  padding: 0.25rem;
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
+  justify-content: center;
   list-style: none;
   width: 100%;
+  border-bottom: 1px solid #282c34;
 }
+
+.App-nav-list li {
+  margin: 0 1rem;
+}
+
+
 .flx {
   display: flex;
 }
