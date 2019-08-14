@@ -19,6 +19,50 @@
   color: white;
 }
 
+.App-content canvas {
+  background-color: white
+}
+
+.App-content .cof-container {
+  width: 35%;
+  margin: 0 auto;
+}
+
+.App-content .cof-container img {
+  width: 100%
+}
+
+.App-content .toggle-controls-container {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  background-color: grey;
+  padding: 1rem;
+  color: black;
+}
+
+.App-content .toggle-controls-container label {
+  margin-right: 1rem, 
+}
+
+.App-content .toggle-controls-container p {
+  align-self: center;
+  color: white;
+  cursor: pointer;
+}
+
+.App-content .toggle-controls-container button {
+  align-self: center;
+  border: 1px solid red;
+  padding: 0.5rem;
+  margin: 0.25rem;
+}
+
+.App-content .toggle-controls-container button:focus {
+  outline: none
+}
+
 .App-link {
   color: #61dafb;
 }

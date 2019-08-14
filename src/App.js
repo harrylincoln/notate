@@ -69,11 +69,8 @@ class App extends React.Component {
           </nav>
           {userData.appStep === 0 ? (
             <section className="App-content">
-              <div style={{
-                width: '35%',
-                margin: '0 auto'
-              }}>
-                <img src="./circle-of-fifths.jpg" alt="circle of fifths" style={{width:'100%'}}/>
+              <div className="cof-container">
+                <img src="./circle-of-fifths.jpg" alt="circle of fifths"/>
               </div>
               <h4>Choose a key (uppercase only)</h4>
               <input onChange={this.updateUserEnteredKey} value={userKey} placeholder='C by default' />

@@ -234,6 +234,8 @@ class BarView extends React.Component {
   
   buildTable() {
     const {savedNotesArr, upperBoundValue, lowerBoundValue, shadowUserData} = this.state;
+    
+    // TODO: loop here
     const schema = savedNotesArr[shadowUserData.activeBarNumber].reduce((acc, curr) => {
       acc.push({
         accidentalOverride: curr.accidentalOverride,
@@ -285,6 +287,19 @@ class BarView extends React.Component {
     this.props.updateUserData({savedNotesArr});
   }
 
+  RenderNoteToggles() {
+    const noteDenoms = [64, 32, 16, 4, 2, 1];
+    const { maxAmountNoteValue, activeNoteLength } = this.state;
+    return noteDenoms.map((item, idx) => (
+      <button
+      key={idx}
+      style={{
+        border: `1px solid ${activeNoteLength === item ? 'red' : 'white'}`,
+      }}
+      onClick={() => this.setNoteValue(maxAmountNoteValue / (maxAmountNoteValue / item))}>{`1/${maxAmountNoteValue / item}`}</button>
+    ))
+  }
+
   render() {
 
     const {  
@@ -299,128 +314,33 @@ class BarView extends React.Component {
             width={canvasWidth} 
             height={canvasHeight} 
             ref={this.canvasRef} 
-            style={{backgroundColor:'white'}} 
             onMouseMove={this.handleMouseMove.bind(this)}
             onClick={this.saveNote.bind(this)}
             ></canvas>
-            <div style={{
-              display: 'flex',
-              flexDirection: 'row',
-              flexWrap: 'wrap',
-            }}>
-              <label style={{marginRight: '1rem'}} htmlFor="lower">Lower bound:</label>
-              <input style={{marginRight: '1rem'}} id="lower" onChange={this.updateLowerBound} value={lowerBoundValue} placeholder='lower bound' />
-              <label style={{marginRight: '1rem'}} htmlFor="upper">Upper bound:</label>
+            <div className="toggle-controls-container">
+              <label htmlFor="lower">Lower bound:</label>
+              <input id="lower" onChange={this.updateLowerBound} value={lowerBoundValue} placeholder='lower bound' />
+              <label htmlFor="upper">Upper bound:</label>
               <input id="upper" onChange={this.updateUpperBound} value={upperBoundValue} placeholder='upper bound' />
             </div>
-            <div style={{
-              marginTop: '1rem',
-              display: 'flex',
-              flexDirection: 'row',
-              flexWrap: 'wrap',
-              backgroundColor: 'grey',
-              padding: '1rem',
-              color: 'black',
-            }}>
-            <p style={{
-                alignSelf: 'center',
-                color: 'white',
-                cursor:'pointer',
-                }}>Notes:</p>
-                <div style={{
-                  alignSelf: 'center',
-                  border: '1px solid red',
-                  padding: '0.5rem',
-                  cursor: 'pointer',
-                  margin: '0.25rem',
-                }} onClick={() => this.setNoteValue(64)}>1/1</div>
-                <div style={{
-                  alignSelf: 'center',
-                  border: '1px solid red',
-                  padding: '0.5rem',
-                  cursor: 'pointer',
-                  margin: '0.25rem',
-                }} onClick={() => this.setNoteValue(32)}>1/2</div>
-                <div style={{
-                  alignSelf: 'center',
-                  border: '1px solid red',
-                  padding: '0.5rem',
-                  cursor: 'pointer',
-                  margin: '0.25rem',
-                }} onClick={() => this.setNoteValue(16)}>1/4</div>
-                <div style={{
-                  alignSelf: 'center',
-                  border: '1px solid red',
-                  padding: '0.5rem',
-                  cursor: 'pointer',
-                  margin: '0.25rem',
-                }} onClick={() => this.setNoteValue(8)}>1/8</div>
-                <div style={{
-                  alignSelf: 'center',
-                  border: '1px solid red',
-                  padding: '0.5rem',
-                  cursor: 'pointer',
-                  margin: '0.25rem',
-                }} onClick={() => this.setNoteValue(4)}>1/16</div>
-                <div style={{
-                  alignSelf: 'center',
-                  border: '1px solid red',
-                  padding: '0.5rem',
-                  cursor: 'pointer',
-                  margin: '0.25rem',
-                }} onClick={() => this.setNoteValue(2)}>1/32</div>
-                <div style={{
-                  alignSelf: 'center',
-                  border: '1px solid red',
-                  padding: '0.5rem',
-                  cursor: 'pointer',
-                  margin: '0.25rem',
-                }} onClick={() => this.setNoteValue(1)}>1/64</div>
-                <div style={{
-                  alignSelf: 'center',
-                  border: '1px solid red',
-                  padding: '0.5rem',
-                  cursor: 'pointer',
-                  margin: '0.25rem',
-                }} onClick={() => this.buildTable()}>Print</div>
+            <div className="toggle-controls-container">
+              <p>Notes:</p>
+              {this.RenderNoteToggles()}
             </div>
-            <div style={{
-              marginTop: '1rem',
-              display: 'flex',
-              flexDirection: 'row',
-              flexWrap: 'wrap',
-              backgroundColor: 'grey',
-              padding: '1rem',
-              color: 'black',
-            }}>
-                <p style={{
-                    alignSelf: 'center',
-                    color: 'white',
-                    cursor:'pointer',
-                    }}>Accidentals (avoid plotting doubles - know your key!):</p>
-                <div style={{
-                  alignSelf: 'center',
-                  border: `1px solid ${accidentalOverride === 'natural'? 'red' : 'white'}`,
-                  padding: '0.5rem',
-                  cursor: 'pointer',
-                  margin: '0.25rem',
-                }} onClick={() => this.assignAccidental('natural')}>&#9838;</div>
-                <div style={{
-                  alignSelf: 'center',
-                  border: `1px solid ${accidentalOverride === 'flat'? 'red' : 'white'}`,
-                  padding: '0.5rem',
-                  cursor: 'pointer',
-                  margin: '0.25rem',
-                }} onClick={() => this.assignAccidental('flat')}>&#9837;</div>
-                <div style={{
-                  alignSelf: 'center',
-                  border: `1px solid ${accidentalOverride === 'sharp' ? 'red' : 'white'}`,
-                  padding: '0.5rem',
-                  cursor: 'pointer',
-                  margin: '0.25rem',
-                }} onClick={() => this.assignAccidental('sharp')}>#</div>
-                <button onClick={() => this.saveBarAndNavigate('-')}>Previous</button>
-                <button onClick={() => this.saveBarAndNavigate('+')}>Next</button>
+            <div className="toggle-controls-container">
+              <p>Accidentals (avoid plotting doubles - know your key!):</p>
+              <button style={{
+                border: `1px solid ${accidentalOverride === 'natural'? 'red' : 'white'}`,
+              }} onClick={() => this.assignAccidental('natural')}>&#9838;</button>
+              <button style={{
+                border: `1px solid ${accidentalOverride === 'flat'? 'red' : 'white'}`,
+              }} onClick={() => this.assignAccidental('flat')}>&#9837;</button>
+              <button style={{
+                border: `1px solid ${accidentalOverride === 'sharp' ? 'red' : 'white'}`,
+              }} onClick={() => this.assignAccidental('sharp')}>#</button>
+              <button onClick={() => this.saveBarAndNavigate('-')}>Previous</button>
+              <button onClick={() => this.saveBarAndNavigate('+')}>Next</button>
+              <button onClick={() => this.buildTable()}>Print</button>
             </div>
             </section>
       );
