@@ -70,9 +70,10 @@ class App extends React.Component {
               <div className="cof-container">
                 <img src="./circle-of-fifths.jpg" alt="circle of fifths"/>
               </div>
-              <h4>Choose a key (uppercase only)</h4>
+              <h1 style={{marginTop: '0'}}>Notes to tab</h1>
+              <h4 style={{marginTop: '0'}}>Choose a key (uppercase only)</h4>
               <input onChange={this.updateUserEnteredKey} value={userData.userKey} placeholder='C by default' />
-              <button onClick={() => this.updateUserNavigation('+')}>Next Step</button>
+              <button style={{marginTop: '0.5rem'}} onClick={() => this.updateUserNavigation('+')}>Next Step</button>
             </section>
           )}
           {userData.appStep === 1 && (

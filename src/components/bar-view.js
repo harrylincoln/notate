@@ -387,11 +387,13 @@ class BarView extends React.Component {
             <section className="App-content">
             {mergedBars.map((bars, idx) => (
               <>
-              {bars.map((bar, barIdx) => (
-                <>
-                {bar}<br/>
-                </>
-              ))}
+                {bars.map((bar, barIdx) => (
+                  <>
+                  <span key={barIdx}>
+                    {bar}
+                  </span>
+                  </>
+                ))}
               <br />
               </>
             ))}
