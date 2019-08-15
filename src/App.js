@@ -66,14 +66,29 @@ class App extends React.Component {
             </ul>
           </nav>
           {userData.appStep === 0 && (
-            <section className="App-content">
+            <section style={{padding: '2rem'}} className="App-content">
               <div className="cof-container">
                 <img src="./circle-of-fifths.jpg" alt="circle of fifths"/>
               </div>
               <h1 style={{marginTop: '0'}}>Notes to tab</h1>
-              <h4 style={{marginTop: '0'}}>Choose a key (uppercase only)</h4>
+              <h4 style={{marginTop: '0'}}>Choose a key (uppercase only):</h4>
               <input onChange={this.updateUserEnteredKey} value={userData.userKey} placeholder='C by default' />
               <button style={{marginTop: '0.5rem'}} onClick={() => this.updateUserNavigation('+')}>Next Step</button>
+              <h4>Usage / gotchas:</h4>
+
+              <p style={{marginTop: '0'}}>- Use a laptop, not a phone. I mean, it might work but not tested <span role='img' aria-label='shrug'>🤷</span></p>
+
+              <p>- Accidentals are not implied based on previously declared ones. 
+              ie. if you want another flat outside of the key after already adding one 
+              at the beginning of the bar, you must implicitly set it again.</p>
+
+              <p>- 4/4 is the only time sig at the moment</p>
+
+              <p>- It has a tough time if you plot tightly voiced triads/chords. This is a known bug and will be fixed.</p>
+
+              <p>- Triplet grouping, beams, dotted values, hooks and tailing of notes aren't configurable at this time. Group them tight if you want a triplet <span role='img' aria-label=''>😚</span></p>
+
+              <p>- Tab has no concept of implicitly setting rests between notes. To address this, your grid will snap the notes to the beat lines.</p>
             </section>
           )}
           {userData.appStep === 1 && (
