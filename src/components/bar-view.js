@@ -382,7 +382,7 @@ class BarView extends React.Component {
               <button onClick={() => this.reset()}>Reset</button>
               <button onClick={() => this.buildTable()}>Generate tab below</button>
             </div>
-            </section>
+          </section>
           {mergedBars && (
             <section className="App-content">
             {mergedBars.map((bars, idx) => (
