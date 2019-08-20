@@ -1,5 +1,6 @@
 import './App.css';
 import React from 'react';
+import ReactGA from 'react-ga';
 import {
   retrieveUserData,
   writeToUserData
@@ -30,6 +31,11 @@ class App extends React.Component {
 
   async componentWillMount() {
     await this.initialiseUserData();
+  }
+
+  componentDidMount() {
+    ReactGA.initialize('UA-146065324-1');
+    ReactGA.pageview('/home');
   }
 
   updateUserEnteredKey(e) {
@@ -86,9 +92,11 @@ class App extends React.Component {
 
               <p>- It has a tough time if you plot tightly voiced triads/chords. This is a known bug and will be fixed.</p>
 
-              <p>- Triplet grouping, beams, dotted values, hooks and tailing of notes aren't configurable at this time. Group them tight if you want a triplet <span role='img' aria-label=''>😚</span></p>
+              <p>- Triplet grouping, beams, dotted values, hooks and tailing of notes aren't configurable at this time. Group them tight if you want a triplet <span role='img' aria-label='kiss'>😚</span></p>
 
               <p>- Tab has no concept of implicitly setting rests between notes. To address this, your grid will snap the notes to the beat lines.</p>
+
+              <p>- If you'd like to raise a bug/PR please do so via the <a rel="noopener noreferrer" target="_blank" href="https://github.com/harrylincoln/notate/">project's Github repo</a> <span role='img' aria-label='thanks'>🙏</span></p>
             </section>
           )}
           {userData.appStep === 1 && (

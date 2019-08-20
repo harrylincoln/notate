@@ -1,3 +1,7 @@
+a {
+  color: #a0ae61;
+}
+
 .App {
   text-align: center;
 }
@@ -96,7 +100,6 @@
 .App-nav-list li {
   margin: 0 1rem;
 }
-
 
 .flx {
   display: flex;

@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactGA from 'react-ga';
 import { staves, 
   mutateNotesToActiveKey, 
   assignTabValues, 
@@ -103,7 +104,10 @@ class BarView extends React.Component {
   }
 
   componentDidMount() {
-    // update
+    ReactGA.initialize('UA-146065324-1');
+    ReactGA.pageview('/bar-view');
+
+    
     this.reCalcBeatLineCords();
     this.draw(); // init
   }
