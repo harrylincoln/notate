@@ -1,6 +1,8 @@
 import './App.css';
+import 'react-toastify/dist/ReactToastify.css';
 import React from 'react';
 import ReactGA from 'react-ga';
+import { ToastContainer } from 'react-toastify';
 import {
   retrieveUserData,
   writeToUserData
@@ -63,6 +65,7 @@ class App extends React.Component {
       return (
         <>
         <div className="App">
+          <ToastContainer />
           <nav className="App-nav">
             <ul className="App-nav-list">
               <li>Active key: {userData.userKey}</li>

@@ -356,8 +356,10 @@ export const groupByString = (groupByStringArr) => {
     6: [],
   };
   groupByStringArr.forEach(item => {
-    if(stringData[item.tabPosition.string]) {
+    if(item.tabPosition) {
       stringData[item.tabPosition.string].push(item)
+      } else {
+        throw new Error('Note(s) out of bounds for your fret range(s). Reload to clear bar and try reconfiguring Fret min/max #');
       }
   });
   return stringData;

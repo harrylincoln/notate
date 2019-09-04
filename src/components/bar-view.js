@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactGA from 'react-ga';
+import { toast } from 'react-toastify';
 import { staves, 
   mutateNotesToActiveKey, 
   assignTabValues, 
@@ -7,6 +8,10 @@ import { staves,
   groupByString,
   buildAsciTable,
 } from '../utils/notation-rules';
+
+import {
+  writeToUserData
+} from '../utils/user-data';
 
 import { drawNotes } from '../utils/canvas';
 
@@ -106,6 +111,10 @@ class BarView extends React.Component {
   componentDidMount() {
     ReactGA.initialize('UA-146065324-1');
     ReactGA.pageview('/bar-view');
+    ReactGA.event({
+      category: 'Usage',
+      action: 'Bar view - started'
+    });
 
     
     this.reCalcBeatLineCords();
@@ -236,6 +245,10 @@ class BarView extends React.Component {
   }
   
   buildTable() {
+    ReactGA.event({
+      category: 'Usage',
+      action: 'Bar view - finished'
+    });
     const {savedNotesArr, upperBoundValue, lowerBoundValue} = this.state;
     
     const mergedBars = Object.keys(savedNotesArr).reduce((mergedAcc, barNum) => {
@@ -254,28 +267,22 @@ class BarView extends React.Component {
 
       try {
         const mutatedToKey = mutateNotesToActiveKey(schema, this.props.userKey);
-        console.log('1. mutatedToKey', mutatedToKey);
-
         const tabValuesAssigned = assignTabValues(mutatedToKey);
-        console.log('2. tabValuesAssigned', tabValuesAssigned);
-
         const groupByPosistion = groupByPosition(tabValuesAssigned);
-        console.log('3. groupByPosistion', groupByPosistion);
-
         const groupByStringArr = groupByString(groupByPosistion);
-        console.log('4. groupByString', groupByStringArr);
-        
+      
         const buildMarkupTable = buildAsciTable(groupByStringArr);
-        console.log('5. buildMarkupTable', buildMarkupTable);
-
         mergedAcc.push(buildMarkupTable);
 
         } catch(e) {
-          console.log('building table error', e);
+          toast.error(e.message);
+          ReactGA.event({
+            category: 'Error',
+            action: e.message
+          });
         }
         return mergedAcc;
       }, []);
-      console.log('6.', mergedBars);
       this.setState({mergedBars});
   }
 
@@ -332,7 +339,9 @@ class BarView extends React.Component {
         activeBarNumber: 1
       }
     }, () => {
-      this.props.updateUserData({activeBarNumber: 1, appStep: 0, savedNotesArr: []});
+      writeToUserData({appStep: 0, userKey: 'C'});
+      window.location.reload();
+
     })
   }
 
