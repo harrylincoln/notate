@@ -1,5 +1,6 @@
 const AWS = require('aws-sdk');
 const s3 = new AWS.S3();
+const cloudfront = new AWS.CloudFront();
 const fs = require('fs');
 const glob = require('glob');
 const mimeTypes = require('mime-types');
@@ -13,28 +14,58 @@ AWS.config = new AWS.Config({
     region: process.env.AWS_DEFAULT_REGION
 });
 
-glob('./build/**/*', {}, (err, files) => {
-    files.forEach(file => {
-        if (!fs.lstatSync(file).isDirectory()) {
-            const fileContents = fs.readFileSync(`./${file}`);
-            const fileMime = mimeTypes.lookup(file);
+const createCloudFrontInvalidation = () => new Promise((resolve, reject) => {
+    const params = {
+        DistributionId: process.env.AWS_CLOUDFRONT_DIST_ID,
+        InvalidationBatch: {
+            CallerReference: Date.now().toString(),
+            Paths: { 
+                Quantity: '1',
+                Items: [
+                    '/*',
+                ]
+            }
+        }
+    };
 
-            s3.upload(
-                {
-                    Bucket: 'notate-app',
-                    Key: file.replace('./build/', ''),
-                    Body: fileContents,
-                    ContentType: fileMime
-                },
-                {partSize: 10 * 1024 * 1024, queueSize: 1},
-                (err, data) => {
-                    if (err) {
-                        throw new Error(err.message);
-                    }
-
-                    console.log(data);
-                }
-            );
+    cloudfront.createInvalidation(params,(err, data) => {
+        if (err) reject(err);
+        else {
+            console.log('createInvalidation success!');
+            resolve();
         }
     });
+});
+
+const uploadFilesToS3 = (files) => {
+    return new Promise((resolve, reject) => {
+        files.forEach(file => {
+            if (!fs.lstatSync(file).isDirectory()) {
+                const fileContents = fs.readFileSync(`./${file}`);
+                const fileMime = mimeTypes.lookup(file);
+    
+                s3.upload(
+                    {
+                        Bucket: 'notate-app',
+                        Key: file.replace('./build/', ''),
+                        Body: fileContents,
+                        ContentType: fileMime
+                    },
+                    {partSize: 10 * 1024 * 1024, queueSize: 1},
+                    (err, data) => {
+                        if (err) {
+                            reject(err.message);
+                        }
+                    }
+                );
+            }
+        });
+        console.log('completed s3 push!');
+        resolve();
+    });
+};
+
+glob('./build/**/*', {}, async (err, files) => {
+    await uploadFilesToS3(files);
+    await createCloudFrontInvalidation();
 });
