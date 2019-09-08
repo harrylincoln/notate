@@ -19,8 +19,8 @@
   "eslintConfig": {
     "extends": "react-app"
   },
-  "engines" : { 
-    "node" : "10.16.0" 
+  "engines": {
+    "node": "10.16.0"
   },
   "browserslist": {
     "production": [
@@ -33,5 +33,11 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "aws-sdk": "^2.524.0",
+    "dotenv": "^8.1.0",
+    "glob": "^7.1.4",
+    "mime-types": "^2.1.24"
   }
 }

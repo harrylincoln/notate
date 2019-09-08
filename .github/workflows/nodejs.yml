@@ -1,26 +1,31 @@
 
 name: Node CI
 
-on: [push]
+on:
+  pull_request:
+  push:
+    branches:
+      - master
 
 jobs:
   build:
 
-    runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [10.x, 12.x]
+    runs-on: ubuntu-18.04
 
     steps:
-    - uses: actions/checkout@v1
-    - name: Use Node.js ${{ matrix.node-version }}
+    - uses: actions/checkout@master
+    - name: Use Node.js 10.x
       uses: actions/setup-node@v1
       with:
-        node-version: ${{ matrix.node-version }}
-    - name: npm install, build, and test
+        version: 10.x
+    - name: Build
       run: |
         npm install
         npm run build --if-present
+    - name: Deploy
+      if: github.event_name == 'push' && github.ref == 'refs/heads/master'
       env:
-        CI: true
+        AWS_DEFAULT_REGION: ap-southeast-2
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET }}
+      run: node ./scripts/deploy.js
