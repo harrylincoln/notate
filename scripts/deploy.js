@@ -29,6 +29,7 @@ glob('./build/**/*', {}, (err, files) => {
                 {partSize: 10 * 1024 * 1024, queueSize: 1},
                 (err, data) => {
                     if (err) {
+                        console.log('process bits!!!!!!!!!!!!', process.env);
                         throw new Error(err.message);
                     }
 
