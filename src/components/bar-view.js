@@ -250,7 +250,9 @@ class BarView extends React.Component {
       action: 'Bar view - finished'
     });
     const {savedNotesArr, upperBoundValue, lowerBoundValue} = this.state;
-    
+
+    this.props.updateUserData({savedNotesArr});
+
     const mergedBars = Object.keys(savedNotesArr).reduce((mergedAcc, barNum) => {
 
       const schema = savedNotesArr[barNum].reduce((acc, curr) => {
