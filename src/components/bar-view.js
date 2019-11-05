@@ -308,7 +308,7 @@ class BarView extends React.Component {
   }
 
   RenderNoteToggles() {
-    const noteDenoms = [64, 32, 16, 4, 2, 1];
+    const noteDenoms = [64, 32, 16, 8, 4, 2, 1];
     const { maxAmountNoteValue, activeNoteLength } = this.state;
     return noteDenoms.map((item, idx) => (
       <button
