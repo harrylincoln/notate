@@ -346,6 +346,10 @@ export const groupByPosition = (assignTabValuesArr) => {
 ]
 */
 
+function hasDuplicates(array) {
+  return (new Set(array)).size !== array.length;
+}
+
 export const groupByString = (groupByStringArr) => {
   const stringData = {
     1: [],
@@ -362,6 +366,16 @@ export const groupByString = (groupByStringArr) => {
         throw new Error('Note(s) out of bounds for your fret range(s). Reload to clear bar and try reconfiguring Fret min/max #');
       }
   });
+  // if string has two or more and same beat closestBeatX
+  Object.values(stringData).forEach(string => {
+    if(string.length > 1) {
+      const closestBeats = string.map(item => item.closestBeatX)
+        console.log(hasDuplicates(closestBeats))
+      }
+  })
+
+
+
   return stringData;
 };
 
