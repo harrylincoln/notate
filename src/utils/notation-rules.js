@@ -1,7 +1,7 @@
 /* eslint-disable no-loop-func */
 import {positions} from './positions';
 
-export let staves = {
+export const staves = {
     map: [
       {x0:0,y0:0,x1:800,y1:0, ledger: [-5,-3, 1], note: {F: 3}},
       {x0:0,y0:20,x1:800,y1:20, ledger: [-4,-2, 0], note: {E: 3}},
@@ -347,7 +347,7 @@ export const groupByPosition = (assignTabValuesArr) => {
 */
 
 export const groupByString = (groupByStringArr) => {
-  let stringData = {
+  const stringData = {
     1: [],
     2: [],
     3: [],
@@ -439,7 +439,7 @@ export const groupByString = (groupByStringArr) => {
 export const buildAsciTable = (groupedByStringsArr) => {
   return Object.values(groupedByStringsArr).reduce((acc, string) => {
     let stringOutput = '';
-    for (let i = 1; i < 65; i++) {
+    for (let i = 1; i < 65; i+=1) {
       const cord = i*10;
       if(string.length === 0) {
         stringOutput += '-';
