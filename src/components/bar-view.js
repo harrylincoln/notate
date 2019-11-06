@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import ReactGA from 'react-ga';
 import { toast } from 'react-toastify';
 import { staves, 
@@ -20,7 +21,7 @@ const canvasWidth = 640;
 const barWidthPadding = canvasWidth / 16;
 const baseNoteSize = 18;
 
-class BarView extends React.Component {
+export default class BarView extends React.Component {
 
   constructor(props) {
     super(props);
@@ -31,7 +32,6 @@ class BarView extends React.Component {
       maxAmountNoteValue: 64, // hemidemisemiquaver
       ifSavedNotes: false,
       saveActive: false,
-      isTripletMode: false,
       lowerBoundValue: 0,
       upperBoundValue: 12,
       accidentalOverride: false,
@@ -50,15 +50,64 @@ class BarView extends React.Component {
     this.beatLineCords = null;
   }
 
+  UNSAFE_componentWillMount() { // eslint-disable-line
+    const { userData, updateUserData } = this.props;
+    updateUserData({appStep: 1});
+
+    if(userData.savedNotesArr) {
+        this.setState({savedNotesArr: userData.savedNotesArr})
+    }
+
+    userData.activeBarNumber ? 
+    this.updateBarNumber(userData.activeBarNumber) 
+    : this.updateBarNumber();
+
+}
+
+componentDidMount() {
+  ReactGA.initialize('UA-146065324-1');
+  ReactGA.pageview('/bar-view');
+  ReactGA.event({
+    category: 'Usage',
+    action: 'Bar view - started'
+  });
+
+  
+  this.reCalcBeatLineCords();
+  this.draw(); // init
+}
+
+componentDidUpdate(prevProps, prevState) {
+  const {activeNoteLength} = this.state;
+
+  if(prevState.activeNoteLength !== activeNoteLength) this.reCalcBeatLineCords();
+}
+
+setNoteValue(duration) {
+  // set state of the note length and recalc staves
+  this.setState({activeNoteLength: duration});
+}
+
+  reCalcBeatLineCords() {
+    const {maxAmountNoteValue, activeNoteLength} = this.state;
+    const denomination = (maxAmountNoteValue / activeNoteLength);
+    this.beatLineCords = new Array(denomination).fill(null).map( (x,i) => {
+      if(i === 0) return barWidthPadding;
+      return (canvasWidth / denomination) * i + barWidthPadding;
+    });
+  }
+
   updateBarNumber(op) {
+    const {shadowUserData} = this.state;
+    const {updateUserData} = this.props;
     if(typeof op === 'number') {
       this.setState({
         shadowUserData: {
-          ...this.state.shadowUserData,
+          ...shadowUserData,
           activeBarNumber: op
         }
       }, () => {
-        this.props.updateUserData(this.state.shadowUserData);
+        updateUserData(shadowUserData);
         this.draw();
       });
     } else {
@@ -66,22 +115,22 @@ class BarView extends React.Component {
         case '+':
           this.setState({
             shadowUserData: {
-              ...this.state.shadowUserData,
-              activeBarNumber: this.state.shadowUserData.activeBarNumber + 1
+              ...shadowUserData,
+              activeBarNumber: shadowUserData.activeBarNumber + 1
             }
           }, () => {
-            this.props.updateUserData(this.state.shadowUserData);
+            updateUserData(shadowUserData);
             this.draw();
           });
           break;
         case '-':
             this.setState({
               shadowUserData: {
-                ...this.state.shadowUserData,
-                activeBarNumber: this.state.shadowUserData.activeBarNumber - 1
+                ...shadowUserData,
+                activeBarNumber: shadowUserData.activeBarNumber - 1
               }
             }, () => {
-              this.props.updateUserData(this.state.shadowUserData);
+              updateUserData(shadowUserData);
               this.draw();
             });
             break;
@@ -90,56 +139,14 @@ class BarView extends React.Component {
           this.setState({shadowUserData: {
             activeBarNumber: 1
           }});
-          this.props.updateUserData({activeBarNumber: 1})
+          updateUserData({activeBarNumber: 1})
           break;
       }
     }
   }
 
-  componentWillMount() {
-      const { userData } = this.props;
-      this.props.updateUserData({appStep: 1});
-
-      if(userData.savedNotesArr) {
-          this.setState({savedNotesArr: userData.savedNotesArr})
-      }
-
-      userData.activeBarNumber ? this.updateBarNumber(userData.activeBarNumber) : this.updateBarNumber();
-
-  }
-
-  componentDidMount() {
-    ReactGA.initialize('UA-146065324-1');
-    ReactGA.pageview('/bar-view');
-    ReactGA.event({
-      category: 'Usage',
-      action: 'Bar view - started'
-    });
-
-    
-    this.reCalcBeatLineCords();
-    this.draw(); // init
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    if(prevState.activeNoteLength !== this.state.activeNoteLength) this.reCalcBeatLineCords();
-  }
-
-  reCalcBeatLineCords() {
-    const denomination = (this.state.maxAmountNoteValue / this.state.activeNoteLength);
-    this.beatLineCords = new Array(denomination).fill(null).map( (x,i) => {
-      if(i === 0) return barWidthPadding;
-      return (canvasWidth / denomination) * i + barWidthPadding;
-    });
-  }
-
-  setNoteValue(duration) {
-    // set state of the note length and recalc staves
-    this.setState({activeNoteLength: duration});
-  }
-
   linepointNearestMouse(stave, x, y) {
-    const lerp = (a,b,x) => (a+x*(b-a));
+    const lerp = (a,b,z) => (a+z*(b-a));
     const dx = stave.x1-stave.x0;
     const dy = stave.y1-stave.y0;
     
@@ -250,8 +257,9 @@ class BarView extends React.Component {
       action: 'Bar view - finished'
     });
     const {savedNotesArr, upperBoundValue, lowerBoundValue} = this.state;
+    const {updateUserData, userKey} = this.props;
 
-    this.props.updateUserData({savedNotesArr});
+    updateUserData({savedNotesArr});
 
     const mergedBars = Object.keys(savedNotesArr).reduce((mergedAcc, barNum) => {
 
@@ -268,7 +276,7 @@ class BarView extends React.Component {
       }, []);
 
       try {
-        const mutatedToKey = mutateNotesToActiveKey(schema, this.props.userKey);
+        const mutatedToKey = mutateNotesToActiveKey(schema, userKey);
         const tabValuesAssigned = assignTabValues(mutatedToKey);
         const groupByPosistion = groupByPosition(tabValuesAssigned);
         const groupByStringArr = groupByString(groupByPosistion);
@@ -303,25 +311,31 @@ class BarView extends React.Component {
 
   saveBarAndNavigate(direction) {
     const { savedNotesArr } = this.state;
+    const { updateUserData } = this.props;
     this.updateBarNumber(direction);
-    this.props.updateUserData({savedNotesArr});
+    updateUserData({savedNotesArr});
   }
 
   RenderNoteToggles() {
     const noteDenoms = [64, 32, 16, 8, 4, 2, 1];
     const { maxAmountNoteValue, activeNoteLength } = this.state;
-    return noteDenoms.map((item, idx) => (
+    return noteDenoms.map((item) => (
       <button
-      key={idx}
-      style={{
+        type="button"
+        key={item}
+        style={{
         border: `1px solid ${activeNoteLength === item ? 'red' : 'white'}`,
       }}
-      onClick={() => this.setNoteValue(maxAmountNoteValue / (maxAmountNoteValue / item))}>{`1/${maxAmountNoteValue / item}`}</button>
+        onClick={() => this.setNoteValue(maxAmountNoteValue / (maxAmountNoteValue / item))}
+      >
+        {`1/${maxAmountNoteValue / item}`}
+      </button>
     ))
   }
 
   clearBar() {
     const {shadowUserData} = this.state;
+    const { updateUserData } = this.props;
     this.setState(prevState => ({
       savedNotesArr: {
         ...prevState.savedNotesArr,
@@ -329,7 +343,7 @@ class BarView extends React.Component {
       },
     }), () => {
       const {savedNotesArr} = this.state;
-      this.props.updateUserData({savedNotesArr});
+      updateUserData({savedNotesArr});
       this.draw();
     });
   }
@@ -361,17 +375,22 @@ class BarView extends React.Component {
         <>
           <section className="App-content">
             <div className="canvas-container">
-              <button disabled={shadowUserData.activeBarNumber < 2}
-              onClick={() => this.saveBarAndNavigate('-')}>Previous</button>
+              <button
+                type="button"
+                disabled={shadowUserData.activeBarNumber < 2}
+                onClick={() => this.saveBarAndNavigate('-')}
+              >
+Previous
+              </button>
               <canvas 
-              width={canvasWidth} 
-              height={canvasHeight} 
-              ref={this.canvasRef} 
-              onMouseMove={this.handleMouseMove.bind(this)}
-              onMouseLeave={this.draw.bind(this)}
-              onClick={this.saveNote.bind(this)}
-              ></canvas>
-              <button onClick={() => this.saveBarAndNavigate('+')}>Next</button>
+                width={canvasWidth} 
+                height={canvasHeight} 
+                ref={this.canvasRef} 
+                onMouseMove={this.handleMouseMove.bind(this)}
+                onMouseLeave={this.draw.bind(this)}
+                onClick={this.saveNote.bind(this)}
+              />
+              <button type="button" onClick={() => this.saveBarAndNavigate('+')}>Next</button>
             </div>
             <div className="toggle-controls-container">
               <label htmlFor="lower">Fret # min:</label>
@@ -382,35 +401,53 @@ class BarView extends React.Component {
             <div className="toggle-controls-container">
               <p>Notes:</p>
               {this.RenderNoteToggles()}
-              <button  style={{
+              <button
+                type="button"
+                style={{
                 border: `1px solid ${accidentalOverride === 'natural'? 'red' : 'white'}`,
-              }} onClick={() => this.assignAccidental('natural')}>&#9838;</button>
-              <button  style={{
+              }}
+                onClick={() => this.assignAccidental('natural')}
+              >
+&#9838;
+              </button>
+              <button
+                type="button"
+                style={{
                 border: `1px solid ${accidentalOverride === 'flat'? 'red' : 'white'}`,
-              }} onClick={() => this.assignAccidental('flat')}>&#9837;</button>
-              <button  style={{
+              }}
+                onClick={() => this.assignAccidental('flat')}
+              >
+&#9837;
+              </button>
+              <button
+                type="button"
+                style={{
                 border: `1px solid ${accidentalOverride === 'sharp' ? 'red' : 'white'}`,
-              }} onClick={() => this.assignAccidental('sharp')}>#</button>
+              }}
+                onClick={() => this.assignAccidental('sharp')}
+              >
+#
+              </button>
             </div>
             <div className="toggle-controls-container">
-              <button onClick={() => this.clearBar()}>Clear bar</button>
-              <button onClick={() => this.reset()}>Reset</button>
-              <button onClick={() => this.buildTable()}>Generate tab below</button>
+              <button type="button" onClick={() => this.clearBar()}>Clear bar</button>
+              <button type="button" onClick={() => this.reset()}>Reset</button>
+              <button type="button" onClick={() => this.buildTable()}>Generate tab below</button>
             </div>
           </section>
           {mergedBars && (
             <section className="App-content">
-            {mergedBars.map((bars, idx) => (
-              <>
-                {bars.map((bar, barIdx) => (
-                  <>
-                  <span key={barIdx}>
-                    {bar}
-                  </span>
-                  </>
+              {mergedBars.map((bars) => (
+                <>
+                  {bars.map((bar) => (
+                    <>
+                      <span key={bar}>
+                        {bar}
+                      </span>
+                    </>
                 ))}
-              <br />
-              </>
+                  <br />
+                </>
             ))}
             </section>
           )}
@@ -419,4 +456,11 @@ class BarView extends React.Component {
     }
   };
 
-export default BarView;
+  BarView.propTypes = {
+    userData: PropTypes.shape({
+      savedNotesArr: [],
+      activeBarNumber: PropTypes.number.isRequired
+    }).isRequired,
+    updateUserData: PropTypes.func.isRequired,
+    userKey: PropTypes.string.isRequired
+  }

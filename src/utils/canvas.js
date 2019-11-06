@@ -85,18 +85,18 @@ export const drawNotes = (notesArr, ctx, maxAmountNoteValue) => {
           const flagPosAndScaleX = val => ((val * stemScale) + (stemPosX - (note.baseNoteSize * 2)));
           const flagPosAndScaleY = val => ((val * stemScale) + stemPosYEnd);
 
-          let start1 = { x: flagPosAndScaleX(6),  y: flagPosAndScaleY(1) };
-          let cp1 =    { x: flagPosAndScaleX(7),  y: flagPosAndScaleY(4) };
-          let cp2 =    { x: flagPosAndScaleX(8),  y: flagPosAndScaleY(5) };
-          let end1 =   { x: flagPosAndScaleX(10), y: flagPosAndScaleY(6) };
+          const start1 = { x: flagPosAndScaleX(6),  y: flagPosAndScaleY(1) };
+          const cp1 =    { x: flagPosAndScaleX(7),  y: flagPosAndScaleY(4) };
+          const cp2 =    { x: flagPosAndScaleX(8),  y: flagPosAndScaleY(5) };
+          const end1 =   { x: flagPosAndScaleX(10), y: flagPosAndScaleY(6) };
 
-          let cp3 =    { x: flagPosAndScaleX(13), y: flagPosAndScaleY(7) };
-          let cp4 =    { x: flagPosAndScaleX(14), y: flagPosAndScaleY(16) };
-          let end2 =   { x: flagPosAndScaleX(10), y: flagPosAndScaleY(17) };
+          const cp3 =    { x: flagPosAndScaleX(13), y: flagPosAndScaleY(7) };
+          const cp4 =    { x: flagPosAndScaleX(14), y: flagPosAndScaleY(16) };
+          const end2 =   { x: flagPosAndScaleX(10), y: flagPosAndScaleY(17) };
 
-          let cp5 =   { x: flagPosAndScaleX(16),  y: flagPosAndScaleY(3) };
-          let cp6 =   { x: flagPosAndScaleX(6),   y: flagPosAndScaleY(7) };
-          let end3 =  { x: flagPosAndScaleX(6),   y: flagPosAndScaleY(7) };
+          const cp5 =   { x: flagPosAndScaleX(16),  y: flagPosAndScaleY(3) };
+          const cp6 =   { x: flagPosAndScaleX(6),   y: flagPosAndScaleY(7) };
+          const end3 =  { x: flagPosAndScaleX(6),   y: flagPosAndScaleY(7) };
 
           // Draw stages of flag
           ctx.beginPath();
