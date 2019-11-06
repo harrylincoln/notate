@@ -42,7 +42,7 @@ class App extends React.Component {
 
   updateUserEnteredKey(e) {
     const {userData} = this.state;
-    userData.userKey = e.target.value;
+    userData.userKey = e.target.value.toLowerCase();
     this.setState({userData});
   }
 
@@ -74,12 +74,12 @@ class App extends React.Component {
             <nav className="App-nav">
               <ul className="App-nav-list">
                 <li>
-                  Active key:
-                  {userData.userKey}
+Active key:
+                  {userData.userKey.toUpperCase()}
                 </li>
                 {userData.activeBarNumber && (
                 <li>
-                  Bar #:
+Bar #:
                   {userData.activeBarNumber}
                 </li>
               )}
@@ -92,19 +92,8 @@ class App extends React.Component {
               </div>
               <h1 style={{marginTop: '0'}}>Notes to tab</h1>
               <h4 style={{marginTop: '0'}}>Choose a key (uppercase only):</h4>
-              <input 
-                onChange={this.updateUserEnteredKey} 
-                value={userData.userKey} 
-                placeholder='C by default'
-              />
-              <button 
-                type="button"
-                style={{marginTop: '0.5rem'}} 
-                onClick={() => this.updateUserNavigation('+')}
-              >
-              Next Step
-
-              </button>
+              <input onChange={this.updateUserEnteredKey} value={userData.userKey.toUpperCase()} placeholder='C by default' />
+              <button type="button" style={{marginTop: '0.5rem'}} onClick={() => this.updateUserNavigation('+')}>Next Step</button>
               <h4>Usage / gotchas:</h4>
 
               <p style={{marginTop: '0'}}>
