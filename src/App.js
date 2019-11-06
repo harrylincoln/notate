@@ -145,7 +145,7 @@ project&apos;s Github repo
           )}
             {userData.appStep === 1 && (
             <BarView 
-              userKey={userData.userKey} 
+              userKey={userData.userKey.toUpperCase()} 
               updateUserData={this.updateUserData} 
               userData={userData}
             />
