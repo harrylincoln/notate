@@ -346,6 +346,10 @@ export const groupByPosition = (assignTabValuesArr) => {
 ]
 */
 
+function hasDuplicates(array) {
+  return (new Set(array)).size !== array.length;
+}
+
 export const groupByString = (groupByStringArr) => {
   const stringData = {
     1: [],
@@ -358,10 +362,48 @@ export const groupByString = (groupByStringArr) => {
   groupByStringArr.forEach(item => {
     if(item.tabPosition) {
       stringData[item.tabPosition.string].push(item)
-      } else {
-        throw new Error('Note(s) out of bounds for your fret range(s). Reload to clear bar and try reconfiguring Fret min/max #');
-      }
+    } else {
+      throw new Error('Note(s) out of bounds for your fret range(s). Reload to clear bar and try reconfiguring Fret min/max #');
+    }
   });
+  
+  // if string has overlapping entries
+  Object.values(stringData).forEach((notesOnString, stringDataIdx) => {
+    
+    if(notesOnString.length === 2) { // TODO: abstract away from basic edge case
+      const closestBeats = notesOnString.map(note => note.closestBeatX);
+      if(hasDuplicates(closestBeats)) {
+        
+        // get references to note in question
+        const noteRef = Object.keys(notesOnString[1].pitch)[0];
+        const posRef = Object.values(notesOnString[1].pitch)[0];
+
+        // find another position for that note and substitute
+        const activePositionSet = positions[noteRef][posRef].sort((a, b) => a.string-b.string);
+        const noteIdxInCurrentPositionSet = activePositionSet.findIndex((position => position.string === notesOnString[1].tabPosition.string));
+        
+        // try and define the swap as the next note in the position set
+        try {
+          const nextInSet = activePositionSet[noteIdxInCurrentPositionSet + 1];
+
+          // ready note data to push to next string
+          const noteToMove = stringData[stringDataIdx + 1][1];
+          noteToMove.tabPosition = nextInSet;
+          
+          // remove conflict
+          stringData[stringDataIdx + 1].splice(-1,1);
+
+          // push into string above
+          stringData[stringDataIdx + 2].push(noteToMove);
+
+        } catch(e) {
+          throw new Error('Note(s) out of bounds - more than likely happening because this is a note in a chord');
+        }
+      }
+    }
+  });
+  
+
   return stringData;
 };
 
