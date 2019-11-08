@@ -261,29 +261,30 @@ export const assignTabValues = (mutatedNotesArr) => {
 */
 
 export const groupByPosition = (assignTabValuesArr) => {
-  return assignTabValuesArr.reduce((acc, curr) => {
+  return assignTabValuesArr.reduce((acc, curr, idx) => {
+    const previous = acc[idx -1];
     const tabPositionWithBounds = curr.tabPosition
     .sort((a, b) => a.fret - b.fret)
-    .filter(pos => pos.fret > curr.lowerBoundValue && pos.fret < curr.upperBoundValue);
-    acc.push({...curr, tabPosition: tabPositionWithBounds[0]});
+    .filter(pos => pos.fret >= curr.lowerBoundValue && pos.fret <= curr.upperBoundValue)
+    .shift();
+    
+    let filteredTabPosition = tabPositionWithBounds;
+
+    // if same position & string as last entry
+    if(previous && (previous.closestBeatX === curr.closestBeatX) && (filteredTabPosition.string === previous.tabPosition.string)) {
+
+      // find in curr.tabPosition what idx this is
+      const activeIdx = curr.tabPosition.findIndex(stringFretPair => stringFretPair.string === filteredTabPosition.string);
+
+      // take whichever is free/exists
+      filteredTabPosition = curr.tabPosition[activeIdx -1] || curr.tabPosition[activeIdx +1];
+
+    }
+
+    acc.push({...curr, tabPosition: filteredTabPosition});
     return acc;
   }, []);
 };
-
-// export const findAveragePosition = (assignTabValuesArr) => {
-//   let total = 0;
-//   let sets = 0;
-//   assignTabValuesArr.forEach(notes => {
-//     notes.tabPosition.forEach(pos => {
-//       sets += 1;
-//       total += pos.fret;
-//     })
-//   });
-//   return {
-//     total,
-//     sets,
-//   }
-// };
 
 /* Sample input for groupByString()
 
@@ -347,6 +348,7 @@ export const groupByPosition = (assignTabValuesArr) => {
 */
 
 export const groupByString = (groupByStringArr) => {
+
   const stringData = {
     1: [],
     2: [],
@@ -358,9 +360,9 @@ export const groupByString = (groupByStringArr) => {
   groupByStringArr.forEach(item => {
     if(item.tabPosition) {
       stringData[item.tabPosition.string].push(item)
-      } else {
-        throw new Error('Note(s) out of bounds for your fret range(s). Reload to clear bar and try reconfiguring Fret min/max #');
-      }
+    } else {
+      throw new Error('Note(s) out of bounds for your fret range(s). Reload to clear bar and try reconfiguring Fret min/max #');
+    }
   });
   return stringData;
 };
