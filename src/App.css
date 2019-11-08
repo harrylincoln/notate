@@ -105,6 +105,11 @@ a {
   display: flex;
 }
 
+.code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);

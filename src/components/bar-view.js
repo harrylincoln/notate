@@ -436,7 +436,7 @@ Previous
             </div>
           </section>
           {mergedBars && (
-            <section className="App-content">
+            <section className="App-content code">
               {mergedBars.map((bars) => (
                 <>
                   {bars.map((bar) => (
