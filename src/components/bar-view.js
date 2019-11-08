@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import ReactGA from 'react-ga';
-// import { toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import { staves, 
   mutateNotesToActiveKey, 
   assignTabValues, 
@@ -275,7 +275,7 @@ setNoteValue(duration) {
         return acc;
       }, []);
 
-      // try {
+      try {
         const mutatedToKey = mutateNotesToActiveKey(schema, userKey);
         const tabValuesAssigned = assignTabValues(mutatedToKey);
         const groupByPosistion = groupByPosition(tabValuesAssigned);
@@ -284,13 +284,13 @@ setNoteValue(duration) {
         const buildMarkupTable = buildAsciTable(groupByStringArr);
         mergedAcc.push(buildMarkupTable);
 
-        // } catch(e) {
-        //   toast.error(e.message);
-        //   ReactGA.event({
-        //     category: 'Error',
-        //     action: e.message
-        //   });
-        // }
+        } catch(e) {
+          toast.error(e.message);
+          ReactGA.event({
+            category: 'Error',
+            action: e.message
+          });
+        }
         return mergedAcc;
       }, []);
       this.setState({mergedBars});
