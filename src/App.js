@@ -1,5 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'react-toastify/dist/ReactToastify.css';
+import './App.css';
 import React from 'react';
 import ReactGA from 'react-ga';
 import { ToastContainer } from 'react-toastify';
@@ -71,29 +72,30 @@ class App extends React.Component {
       <div className="container">
         <ToastContainer />
         <div className="header clearfix">
-          <nav>
-            <ul className="nav">
-              <li>
+          <ul className="nav justify-content-center">
+            <li className="nav-item p-1">
 Active key: 
-                {userData.userKey}
+              {' '}
+              {userData.userKey}
 
-              </li>
-              {userData.activeBarNumber && (
-              <li>
-   Bar #:
+            </li>
+            {userData.activeBarNumber && (
+              <li className="nav-item p-1">
+   || Bar #:
+                {' '}
                 {userData.activeBarNumber}
               </li>
                  )}
-            </ul>
-          </nav>
-          {userData.appStep === 0 && (
+          </ul>
+        </div>
+        {userData.appStep === 0 && (
           <section>
             <div className="jumbotron">
               <div className="row">
                 <div className="col-lg-6">
                   <h1 className="display-3">NotesToTab</h1>
                   <p className="lead">This tool is ideal for a quick and dirty idea of what the guitar tab would look if you plotted the notation.</p>
-                  <h4>Steps:</h4>
+                  <h4>How to use:</h4>
                   <ul>
                     <li>Choose a key, perhaps with help of the circle of fifths (image)</li>
                     <li>Enter below (D, Bb, C# etc.)</li>
@@ -148,14 +150,13 @@ Active key:
             </div>
           </section>
  )}
-          {userData.appStep === 1 && (
+        {userData.appStep === 1 && (
           <BarView 
             userKey={userData.userKey.toUpperCase()} 
             updateUserData={this.updateUserData} 
             userData={userData}
           />
             )}
-        </div>
       </div>
     );
   }
