@@ -94,12 +94,19 @@ Active key:
               <div className="row">
                 <div className="col-lg-6">
                   <h1 className="display-3">NotesToTab</h1>
-                  <p className="lead">This tool is ideal for a quick and dirty idea of what the guitar tab would look if you plotted the notation.</p>
+                  <p className="lead">This tool is ideal for a quick and dirty idea of what the guitar tab would look like if you plotted the notation.</p>
                   <h4>How to use:</h4>
                   <ul>
                     <li>Choose a key, perhaps with help of the circle of fifths (image)</li>
                     <li>Enter below (D, Bb, C# etc.)</li>
-                    <li>After hitting Next Step button you&apos;ll be taken through to an interactive music stave where you can plot your notes</li>
+                    <li>UPPERCASE KEYS ONLY PLEASE (i.e not c#, d#)</li>
+                    <li>
+After hitting
+                      {' '}
+                      <strong>Next Step</strong>
+                      {' '}
+button you&apos;ll be taken through to an interactive music stave where you can plot your notes
+                    </li>
                   </ul>
                   <div className="input-group mb-3">
                     <input onChange={this.updateUserEnteredKey} value={userData.userKey} placeholder='C by default' />
