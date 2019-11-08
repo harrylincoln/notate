@@ -1,5 +1,6 @@
-import './App.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import 'react-toastify/dist/ReactToastify.css';
+import './App.css';
 import React from 'react';
 import ReactGA from 'react-ga';
 import { ToastContainer } from 'react-toastify';
@@ -42,7 +43,7 @@ class App extends React.Component {
 
   updateUserEnteredKey(e) {
     const {userData} = this.state;
-    userData.userKey = e.target.value.toLowerCase();
+    userData.userKey = e.target.value;
     this.setState({userData});
   }
 
@@ -67,93 +68,107 @@ class App extends React.Component {
     const { 
       userData
     } = this.state;
-      return (
-        <>
-          <div className="App">
-            <ToastContainer />
-            <nav className="App-nav">
-              <ul className="App-nav-list">
-                <li>
-Active key:
-                  {userData.userKey.toUpperCase()}
-                </li>
-                {userData.activeBarNumber && (
-                <li>
-Bar #:
-                  {userData.activeBarNumber}
-                </li>
-              )}
-              </ul>
-            </nav>
-            {userData.appStep === 0 && (
-            <section style={{padding: '2rem'}} className="App-content">
-              <div className="cof-container">
-                <img src="./circle-of-fifths.jpg" alt="circle of fifths" />
-              </div>
-              <h1 style={{marginTop: '0'}}>Notes to tab</h1>
-              <h4 style={{marginTop: '0'}}>Choose a key (uppercase only):</h4>
-              <input onChange={this.updateUserEnteredKey} value={userData.userKey.toUpperCase()} placeholder='C by default' />
-              <button type="button" style={{marginTop: '0.5rem'}} onClick={() => this.updateUserNavigation('+')}>Next Step</button>
-              <h4>Usage / gotchas:</h4>
+    return (
+      <div className="container">
+        <ToastContainer />
+        <div className="header clearfix">
+          <ul className="nav justify-content-center">
+            <li className="nav-item p-1">
+Active key: 
+              {' '}
+              {userData.userKey}
 
-              <p style={{marginTop: '0'}}>
-- Use a laptop, not a phone. I mean, it might work but not tested
-                <span role='img' aria-label='shrug'>🤷</span>
-              </p>
-
-              <p>
-- Accidentals are not implied based on previously declared ones. 
-              ie. if you want another flat outside of the key after already adding one 
-              at the beginning of the bar, you must implicitly set it again.
-              </p>
-
-              <p>- 4/4 is the only time sig at the moment</p>
-
-              <p>
-- It has a tough time if you plot tightly voiced triads/chords. 
-              This is a known bug and will be fixed.
-
-              </p>
-
-              <p>
-- Triplet grouping, beams, dotted values, 
-hooks and tailing of notes aren&apos;t configurable at this time. 
-Group them tight if you want a triplet
-                <span role='img' aria-label='kiss'>😚</span>
-              </p>
-
-              <p>
-- Tab has no concept of implicitly setting rests between notes. 
-              To address this, your grid will snap the notes to the beat lines.
-
-              </p>
-
-              <p>
-- If you&apos;d like to raise a bug/PR please do so via the
-                <a
-                  rel="noopener noreferrer" 
-                  target="_blank" 
-                  href="https://github.com/harrylincoln/notate/"
-                >
-project&apos;s Github repo
-
-                </a> 
+            </li>
+            {userData.activeBarNumber && (
+              <li className="nav-item p-1">
+   || Bar #:
                 {' '}
-                <span role='img' aria-label='thanks'>🙏</span>
-              </p>
-            </section>
-          )}
-            {userData.appStep === 1 && (
-            <BarView 
-              userKey={userData.userKey.toUpperCase()} 
-              updateUserData={this.updateUserData} 
-              userData={userData}
-            />
-          )}
-          </div>
-        </>
-      )
+                {userData.activeBarNumber}
+              </li>
+                 )}
+          </ul>
+        </div>
+        {userData.appStep === 0 && (
+          <section>
+            <div className="jumbotron">
+              <div className="row">
+                <div className="col-lg-6">
+                  <h1 className="display-3">NotesToTab</h1>
+                  <p className="lead">This tool is ideal for a quick and dirty idea of what the guitar tab would look like if you plotted the notation.</p>
+                  <h4>How to use:</h4>
+                  <ul>
+                    <li>Choose a key, perhaps with help of the circle of fifths (image)</li>
+                    <li>Enter below (D, Bb, C# etc.)</li>
+                    <li>UPPERCASE KEYS ONLY PLEASE (i.e not c#, d#)</li>
+                    <li>
+After hitting
+                      {' '}
+                      <strong>Next Step</strong>
+                      {' '}
+button you&apos;ll be taken through to an interactive music stave where you can plot your notes
+                    </li>
+                  </ul>
+                  <div className="input-group mb-3">
+                    <input onChange={this.updateUserEnteredKey} value={userData.userKey} placeholder='C by default' />
+                    <div className="input-group-append">
+                      <button className="btn btn-outline-primary" type="button" onClick={() => this.updateUserNavigation('+')}>Next Step</button>
+                    </div>
+                  </div> 
+                </div>
+                <div className="col-lg-6">
+                  <img className="img-fluid p-2" src="./circle-of-fifths.jpg" alt="circle of fifths" />
+                </div>
+              </div>
+            </div>
+            <h2>Common gotchas</h2>
+            <div className="row marketing">
+              <div className="col-lg-6">
+                <p>
+  - Use a laptop, not a phone. I mean, it might work but not tested
+                  <span role='img' aria-label='shrug'>🤷</span>
+
+                </p>
+                <p>
+  - Accidentals are not implied based on previously declared ones. 
+                  ie. if you want another flat outside of the key after already adding one 
+                  at the beginning of the bar, you must implicitly set it again.
+
+                </p>
+                <p>- 4/4 is the only time sig at the moment</p>
+              </div>
+
+              <div className="col-lg-6">
+                <p>- It has a tough time if you plot tightly voiced triads/chords.</p>
+
+                <p>
+  - Triplet grouping, beams, dotted values, 
+    hooks and tailing of notes aren&apos;t configurable at this time. 
+    Group them tight if you want a triplet
+                  <span role='img' aria-label='kiss'>😚</span>
+
+                </p>
+
+                <p>
+  - Tab has no concept of implicitly setting rests between notes. 
+                  To address this, your grid will snap the notes to the beat lines.
+
+                </p>
+              </div>
+            </div>
+          </section>
+ )}
+        {userData.appStep === 1 && (
+          <BarView 
+            userKey={userData.userKey.toUpperCase()} 
+            updateUserData={this.updateUserData} 
+            userData={userData}
+          />
+            )}
+      </div>
+    );
   }
-}
+};
+
+
 
 export default App;

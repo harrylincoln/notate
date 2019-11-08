@@ -13,8 +13,7 @@ a {
 }
 
 .App-content {
-  background-color: #282c34;
-  min-height: 100vh;
+  background-color: #e9ecef;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -103,6 +102,12 @@ a {
 
 .flx {
   display: flex;
+}
+
+.code {
+    font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+    color: #282c34;
 }
 
 @keyframes App-logo-spin {

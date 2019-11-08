@@ -321,6 +321,7 @@ setNoteValue(duration) {
     const { maxAmountNoteValue, activeNoteLength } = this.state;
     return noteDenoms.map((item) => (
       <button
+        className="btn btn-secondary"
         type="button"
         key={item}
         style={{
@@ -376,6 +377,7 @@ setNoteValue(duration) {
           <section className="App-content">
             <div className="canvas-container">
               <button
+                className="btn btn-secondary"
                 type="button"
                 disabled={shadowUserData.activeBarNumber < 2}
                 onClick={() => this.saveBarAndNavigate('-')}
@@ -390,18 +392,23 @@ Previous
                 onMouseLeave={this.draw.bind(this)}
                 onClick={this.saveNote.bind(this)}
               />
-              <button type="button" onClick={() => this.saveBarAndNavigate('+')}>Next</button>
+              <button className="btn btn-primary" type="button" onClick={() => this.saveBarAndNavigate('+')}>Next</button>
             </div>
-            <div className="toggle-controls-container">
-              <label htmlFor="lower">Fret # min:</label>
-              <input id="lower" onChange={this.updateLowerBound} value={lowerBoundValue} placeholder='lower bound' />
-              <label htmlFor="upper">Fret # max:</label>
-              <input id="upper" onChange={this.updateUpperBound} value={upperBoundValue} placeholder='upper bound' />
+            <div className="toggle-controls-container input-group w-auto">
+              <div className="input-group-prepend">
+                <span className="input-group-text">Fret # min:</span>
+              </div>
+              <input onChange={this.updateLowerBound} value={lowerBoundValue} placeholder='lower bound' />
+              <div className="input-group-prepend">
+                <span className="input-group-text">Fret # max:</span>
+              </div>
+              <input onChange={this.updateUpperBound} value={upperBoundValue} placeholder='upper bound' />
             </div>
             <div className="toggle-controls-container">
               <p>Notes:</p>
               {this.RenderNoteToggles()}
               <button
+                className="btn btn-secondary"
                 type="button"
                 style={{
                 border: `1px solid ${accidentalOverride === 'natural'? 'red' : 'white'}`,
@@ -411,6 +418,7 @@ Previous
 &#9838;
               </button>
               <button
+                className="btn btn-secondary"
                 type="button"
                 style={{
                 border: `1px solid ${accidentalOverride === 'flat'? 'red' : 'white'}`,
@@ -420,6 +428,7 @@ Previous
 &#9837;
               </button>
               <button
+                className="btn btn-secondary"
                 type="button"
                 style={{
                 border: `1px solid ${accidentalOverride === 'sharp' ? 'red' : 'white'}`,
@@ -430,13 +439,13 @@ Previous
               </button>
             </div>
             <div className="toggle-controls-container">
-              <button type="button" onClick={() => this.clearBar()}>Clear bar</button>
-              <button type="button" onClick={() => this.reset()}>Reset</button>
-              <button type="button" onClick={() => this.buildTable()}>Generate tab below</button>
+              <button className="btn btn-warning" type="button" onClick={() => this.clearBar()}>Clear bar</button>
+              <button className="btn btn-danger" type="button" onClick={() => this.reset()}>Reset</button>
+              <button className="btn btn-success" type="button" onClick={() => this.buildTable()}>Generate tab below</button>
             </div>
           </section>
           {mergedBars && (
-            <section className="App-content">
+            <section className="App-content code">
               {mergedBars.map((bars) => (
                 <>
                   {bars.map((bar) => (
