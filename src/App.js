@@ -69,26 +69,27 @@ class App extends React.Component {
       userData
     } = this.state;
     return (
-      <div className="container">
-        <ToastContainer />
-        <div className="header clearfix">
-          <ul className="nav justify-content-center">
-            <li className="nav-item p-1">
-Active key: 
-              {' '}
-              {userData.userKey}
-
-            </li>
-            {userData.activeBarNumber && (
+      <>
+        <div className="container">
+          <ToastContainer />
+          <div className="header clearfix">
+            <ul className="nav justify-content-center">
               <li className="nav-item p-1">
-   || Bar #:
+  Active key: 
                 {' '}
-                {userData.activeBarNumber}
+                {userData.userKey}
+
               </li>
-                 )}
-          </ul>
-        </div>
-        {userData.appStep === 0 && (
+              {userData.activeBarNumber && (
+                <li className="nav-item p-1">
+    || Bar #:
+                  {' '}
+                  {userData.activeBarNumber}
+                </li>
+                  )}
+            </ul>
+          </div>
+          {userData.appStep === 0 && (
           <section>
             <div className="jumbotron">
               <div className="row">
@@ -161,14 +162,24 @@ button you&apos;ll be taken through to an interactive music stave where you can 
             </div>
           </section>
  )}
-        {userData.appStep === 1 && (
+          {userData.appStep === 1 && (
           <BarView 
             userKey={userData.userKey.toUpperCase()} 
             updateUserData={this.updateUserData} 
             userData={userData}
           />
             )}
-      </div>
+        </div>
+        <footer className="footer navbar-fixed-bottom py-4 bg-secondary text-white">
+          <div className="container text-center">
+            
+Made by Harry Lincoln and still very much a WIP.
+            {' '}
+            <a href="https://github.com/harrylincoln/notate/">Submit a PR and contribute!</a>
+            
+          </div>
+        </footer>
+      </>
     );
   }
 };
