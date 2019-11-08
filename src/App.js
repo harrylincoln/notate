@@ -113,7 +113,11 @@ button you&apos;ll be taken through to an interactive music stave where you can 
                     <div className="input-group-append">
                       <button className="btn btn-outline-primary" type="button" onClick={() => this.updateUserNavigation('+')}>Next Step</button>
                     </div>
-                  </div> 
+                  </div>
+                  <h4 className="mt-2">How NOT to use:</h4>
+                  <ul>
+                    <li>On a device - you need a trackpad/mouse to plot the notes</li>
+                  </ul>
                 </div>
                 <div className="col-lg-6">
                   <img className="img-fluid p-2" src="./circle-of-fifths.jpg" alt="circle of fifths" />
