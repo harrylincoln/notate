@@ -8,6 +8,7 @@ import {
   retrieveUserData,
   writeToUserData
 } from './utils/user-data';
+import keys from './utils/keys';
 
 import BarView from './components/bar-view';
 
@@ -43,7 +44,7 @@ class App extends React.Component {
 
   updateUserEnteredKey(e) {
     const {userData} = this.state;
-    userData.userKey = e.target.value;
+    userData.userKey = keys.normalize(e.target.value);
     this.setState({userData});
   }
 
@@ -100,7 +101,6 @@ class App extends React.Component {
                   <ul>
                     <li>Choose a key, perhaps with help of the circle of fifths (image)</li>
                     <li>Enter below (D, Bb, C# etc.)</li>
-                    <li>UPPERCASE KEYS ONLY PLEASE (i.e not c#, d#)</li>
                     <li>
 After hitting
                       {' '}
