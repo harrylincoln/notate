@@ -13,7 +13,7 @@ it('normalizes uppercase C sharp', () => {
 });
 
 it('normalizes lowercase C sharp', () => {
-    expect(keys.normalize('C#')).toBe('C#');
+    expect(keys.normalize('c#')).toBe('C#');
 });
 
 it('normalizes uppercase G flat', () => {
