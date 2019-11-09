@@ -18,11 +18,11 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: 10.x
-    - name: Test
+    - name: Lint and test
       run: |
         npm install
-        npm lint
-        npm test
+        npm run lint
+        npm run test
     - name: Build
       run: |
         npm install
