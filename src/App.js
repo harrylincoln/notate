@@ -26,8 +26,8 @@ class App extends React.Component {
 
   }
 
-  async UNSAFE_componentWillMount() { // eslint-disable-line
-    await this.initialiseUserData();
+  UNSAFE_componentWillMount() { // eslint-disable-line
+    this.initialiseUserData();
   }
 
   componentDidMount() {
@@ -36,9 +36,9 @@ class App extends React.Component {
   }
 
   initialiseUserData() {
-    return new Promise(resolve => this.setState({
+    this.setState({
       userData: retrieveUserData()
-    }, resolve()));
+    });
   }
 
   updateUserEnteredKey(e) {
@@ -110,9 +110,9 @@ button you&apos;ll be taken through to an interactive music stave where you can 
                     </li>
                   </ul>
                   <div className="input-group mb-3">
-                    <input onChange={this.updateUserEnteredKey} value={userData.userKey} placeholder='C by default' />
+                    <input id="userKeyInput" onChange={this.updateUserEnteredKey} value={userData.userKey} placeholder='C by default' />
                     <div className="input-group-append">
-                      <button className="btn btn-outline-primary" type="button" onClick={() => this.updateUserNavigation('+')}>Next Step</button>
+                      <button id="continueToBarViewBtn" className="btn btn-outline-primary" type="button" onClick={() => this.updateUserNavigation('+')}>Next Step</button>
                     </div>
                   </div>
                   <h4 className="mt-2">How NOT to use:</h4>
