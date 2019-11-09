@@ -164,7 +164,7 @@ button you&apos;ll be taken through to an interactive music stave where you can 
  )}
           {userData.appStep === 1 && (
           <BarView 
-            userKey={userData.userKey.toUpperCase()} 
+            userKey={userData.userKey} 
             updateUserData={this.updateUserData} 
             userData={userData}
           />
