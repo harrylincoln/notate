@@ -4,6 +4,7 @@ import { shallow, mount } from 'enzyme';
 import App from './App';
 
 jest.mock("react-ga");
+HTMLCanvasElement.prototype.getContext = () => jest.func();
 
 const setStateSpy = jest.spyOn(App.prototype, 'setState');
 
