@@ -21,6 +21,49 @@ export const positions = {
             {string: 6, fret: 12},
         ],
     },
+    'E#': {
+        0: [
+            {string: 1, fret: 1}
+        ],
+        1: [
+            {string: 1, fret: 13},
+            {string: 2, fret: 8},
+            {string: 3, fret: 3},
+        ],
+        2: [
+            {string: 2, fret: 20},
+            {string: 3, fret: 15},
+            {string: 4, fret: 10},
+            {string: 5, fret: 6},
+            {string: 6, fret: 1},
+        ],
+        3: [
+            {string: 5, fret: 18},
+            {string: 6, fret: 13},
+        ],
+    },
+    'Fb': {
+        0: [
+            {string: 1, fret: 0}
+        ],
+        1: [
+            {string: 1, fret: 12},
+            {string: 2, fret: 7},
+            {string: 3, fret: 2},
+        ],
+        2: [
+            {string: 2, fret: 19},
+            {string: 3, fret: 14},
+            {string: 4, fret: 9},
+            {string: 5, fret: 5},
+            {string: 6, fret: 0},
+        ],
+        3: [
+            {string: 4, fret: 21},
+            {string: 5, fret: 17},
+            {string: 6, fret: 12},
+        ],
+    },
     'F': {
         0: [
             {string: 1, fret: 1}
@@ -227,6 +270,49 @@ export const positions = {
         ],
         3: [
             {string: 6, fret: 19},
+        ],
+    },
+    'Cb': {
+        0: [
+            {string: 1, fret: 7},
+            {string: 2, fret: 2}
+        ],
+        1: [
+            {string: 1, fret: 19},
+            {string: 2, fret: 14},
+            {string: 3, fret: 9},
+            {string: 4, fret: 4},
+            {string: 5, fret: 0},
+        ],
+        2: [
+            {string: 3, fret: 21},
+            {string: 4, fret: 16},
+            {string: 5, fret: 12},
+            {string: 6, fret: 7},
+        ],
+        3: [
+            {string: 6, fret: 19},
+        ],
+    },
+    'B#': {
+        0: [
+            {string: 1, fret: 8},
+            {string: 2, fret: 3}
+        ],
+        1: [
+            {string: 1, fret: 20},
+            {string: 2, fret: 15},
+            {string: 3, fret: 10},
+            {string: 4, fret: 5},
+            {string: 5, fret: 1},
+        ],
+        2: [
+            {string: 4, fret: 17},
+            {string: 5, fret: 13},
+            {string: 6, fret: 8},
+        ],
+        3: [
+            {string: 6, fret: 20},
         ],
     },
     'C': {
