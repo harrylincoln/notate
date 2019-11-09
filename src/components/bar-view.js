@@ -62,31 +62,31 @@ export default class BarView extends React.Component {
     this.updateBarNumber(userData.activeBarNumber) 
     : this.updateBarNumber();
 
-}
+  }
 
-componentDidMount() {
-  ReactGA.initialize('UA-146065324-1');
-  ReactGA.pageview('/bar-view');
-  ReactGA.event({
-    category: 'Usage',
-    action: 'Bar view - started'
-  });
+  componentDidMount() {
+    ReactGA.initialize('UA-146065324-1');
+    ReactGA.pageview('/bar-view');
+    ReactGA.event({
+      category: 'Usage',
+      action: 'Bar view - started'
+    });
 
-  
-  this.reCalcBeatLineCords();
-  this.draw(); // init
-}
+    
+    this.reCalcBeatLineCords();
+    this.draw(); // init
+  }
 
-componentDidUpdate(prevProps, prevState) {
-  const {activeNoteLength} = this.state;
+  componentDidUpdate(prevProps, prevState) {
+    const {activeNoteLength} = this.state;
 
-  if(prevState.activeNoteLength !== activeNoteLength) this.reCalcBeatLineCords();
-}
+    if(prevState.activeNoteLength !== activeNoteLength) this.reCalcBeatLineCords();
+  }
 
-setNoteValue(duration) {
-  // set state of the note length and recalc staves
-  this.setState({activeNoteLength: duration});
-}
+  setNoteValue(duration) {
+    // set state of the note length and recalc staves
+    this.setState({activeNoteLength: duration});
+  }
 
   reCalcBeatLineCords() {
     const {maxAmountNoteValue, activeNoteLength} = this.state;

@@ -4,7 +4,15 @@ import { shallow, mount } from 'enzyme';
 import App from './App';
 
 jest.mock('react-ga');
-HTMLCanvasElement.prototype.getContext = () => jest.fn();
+window.HTMLCanvasElement.prototype.getContext = () => {
+  return {
+      clearRect: jest.fn(),
+      beginPath: jest.fn(),
+      moveTo: jest.fn(),
+      lineTo: jest.fn(),
+      stroke: jest.fn()
+  };
+};
 
 const setStateSpy = jest.spyOn(App.prototype, 'setState');
 
