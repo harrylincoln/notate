@@ -96,6 +96,9 @@
     "pretty-quick": "^2.0.1"
   },
   "jest": {
+    "setupFiles": [
+      "<rootDir>test/setup/onFailPropType.js"
+    ],
     "setupFilesAfterEnv": [
       "<rootDir>test/setup/setupEnzyme.js"
     ],
