@@ -61,6 +61,9 @@
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
     "test": "jest --coverage",
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run",
+    "cypress:CI": "start-server-and-test start http://localhost:3000 cypress:run",
     "lint": "NODE_PATH=src eslint --ext .js,.jsx src",
     "lint:fix": "yarn lint --fix"
   },
@@ -84,6 +87,7 @@
   },
   "devDependencies": {
     "aws-sdk": "^2.524.0",
+    "cypress": "^3.6.1",
     "enzyme": "^3.10.0",
     "enzyme-adapter-react-16": "^1.15.1",
     "enzyme-to-json": "^3.4.3",
@@ -93,7 +97,8 @@
     "jest": "^24.9.0",
     "mime-types": "^2.1.24",
     "prettier": "^1.18.2",
-    "pretty-quick": "^2.0.1"
+    "pretty-quick": "^2.0.1",
+    "start-server-and-test": "^1.10.6"
   },
   "jest": {
     "setupFiles": [
@@ -103,7 +108,8 @@
       "<rootDir>test/setup/setupEnzyme.js"
     ],
     "testPathIgnorePatterns": [
-      "<rootDir>/test/setup/"
+      "<rootDir>/test/setup/",
+      "<rootDir>/cypress"
     ],
     "moduleNameMapper": {
       "\\.(css|less)$": "identity-obj-proxy"
