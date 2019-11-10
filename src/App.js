@@ -78,7 +78,7 @@ class App extends React.Component {
               <li className="nav-item p-1">
   Active key: 
                 {' '}
-                {userData.userKey}
+                <span id="active-key">{userData.userKey}</span>
 
               </li>
               {userData.activeBarNumber && (

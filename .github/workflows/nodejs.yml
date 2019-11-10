@@ -18,11 +18,14 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: 10.x
-    - name: Lint and test
+    - name: Install & lint
       run: |
         npm install
         npm run lint
-        npm run test
+    - name: Unit tests
+      run: npm run test
+    - name: Cypress tests
+      run: npm run cypress:CI
     - name: Build
       run: npm run build --if-present
     - name: Deploy
