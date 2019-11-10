@@ -108,7 +108,8 @@
       "<rootDir>test/setup/setupEnzyme.js"
     ],
     "testPathIgnorePatterns": [
-      "<rootDir>/test/setup/"
+      "<rootDir>/test/setup/",
+      "<rootDir>/cypress"
     ],
     "moduleNameMapper": {
       "\\.(css|less)$": "identity-obj-proxy"
