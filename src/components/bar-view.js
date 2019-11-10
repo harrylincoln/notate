@@ -62,31 +62,31 @@ export default class BarView extends React.Component {
     this.updateBarNumber(userData.activeBarNumber) 
     : this.updateBarNumber();
 
-}
+  }
 
-componentDidMount() {
-  ReactGA.initialize('UA-146065324-1');
-  ReactGA.pageview('/bar-view');
-  ReactGA.event({
-    category: 'Usage',
-    action: 'Bar view - started'
-  });
+  componentDidMount() {
+    ReactGA.initialize('UA-146065324-1');
+    ReactGA.pageview('/bar-view');
+    ReactGA.event({
+      category: 'Usage',
+      action: 'Bar view - started'
+    });
 
-  
-  this.reCalcBeatLineCords();
-  this.draw(); // init
-}
+    
+    this.reCalcBeatLineCords();
+    this.draw(); // init
+  }
 
-componentDidUpdate(prevProps, prevState) {
-  const {activeNoteLength} = this.state;
+  componentDidUpdate(prevProps, prevState) {
+    const {activeNoteLength} = this.state;
 
-  if(prevState.activeNoteLength !== activeNoteLength) this.reCalcBeatLineCords();
-}
+    if(prevState.activeNoteLength !== activeNoteLength) this.reCalcBeatLineCords();
+  }
 
-setNoteValue(duration) {
-  // set state of the note length and recalc staves
-  this.setState({activeNoteLength: duration});
-}
+  setNoteValue(duration) {
+    // set state of the note length and recalc staves
+    this.setState({activeNoteLength: duration});
+  }
 
   reCalcBeatLineCords() {
     const {maxAmountNoteValue, activeNoteLength} = this.state;
@@ -377,6 +377,7 @@ setNoteValue(duration) {
           <section className="App-content">
             <div className="canvas-container">
               <button
+                id="decrement-bar"
                 className="btn btn-secondary"
                 type="button"
                 disabled={shadowUserData.activeBarNumber < 2}
@@ -392,7 +393,7 @@ Previous
                 onMouseLeave={this.draw.bind(this)}
                 onClick={this.saveNote.bind(this)}
               />
-              <button className="btn btn-primary" type="button" onClick={() => this.saveBarAndNavigate('+')}>Next</button>
+              <button id="increment-bar" className="btn btn-primary" type="button" onClick={() => this.saveBarAndNavigate('+')}>Next</button>
             </div>
             <div className="toggle-controls-container input-group w-auto">
               <div className="input-group-prepend">
@@ -441,11 +442,11 @@ Previous
             <div className="toggle-controls-container">
               <button className="btn btn-warning" type="button" onClick={() => this.clearBar()}>Clear bar</button>
               <button className="btn btn-danger" type="button" onClick={() => this.reset()}>Reset</button>
-              <button className="btn btn-success" type="button" onClick={() => this.buildTable()}>Generate tab below</button>
+              <button id="build-table-btn" className="btn btn-success" type="button" onClick={() => this.buildTable()}>Generate tab below</button>
             </div>
           </section>
           {mergedBars && (
-            <section className="App-content code">
+            <section id="tab-table" className="App-content code">
               {mergedBars.map((bars) => (
                 <>
                   {bars.map((bar) => (
