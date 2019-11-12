@@ -67,6 +67,12 @@
     "lint": "NODE_PATH=src eslint --ext .js,.jsx src",
     "lint:fix": "yarn lint --fix"
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint && npm run test",
+      "pre-push": "npm run cypress:CI"
+    }
+  },
   "eslintConfig": {
     "extends": "react-app"
   },
@@ -94,6 +100,7 @@
     "eslint-config-airbnb": "^18.0.1",
     "eslint-config-prettier": "^6.5.0",
     "glob": "^7.1.4",
+    "husky": "^3.0.9",
     "jest": "^24.9.0",
     "mime-types": "^2.1.24",
     "prettier": "^1.18.2",
