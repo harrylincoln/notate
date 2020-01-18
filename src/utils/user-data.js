@@ -1,4 +1,4 @@
-export const retrieveUserData = () => window.localStorage.getItem('userData') ? JSON.parse(window.localStorage.getItem('userData')) : {
+export const retrieveUserData = () => window.localStorage.getItem('userData') !== null ? JSON.parse(window.localStorage.getItem('userData')) : {
     appStep: 0,
     userKey: 'C'
 };

@@ -405,7 +405,7 @@ Previous
               </div>
               <input onChange={this.updateUpperBound} value={upperBoundValue} placeholder='upper bound' />
             </div>
-            <div className="toggle-controls-container">
+            <div id="denom-buttons" className="toggle-controls-container">
               <p>Notes:</p>
               {this.RenderNoteToggles()}
               <button
