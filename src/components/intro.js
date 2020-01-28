@@ -1,7 +1,13 @@
 import React from 'react';
 
 export default function Intro (props) {
-    const { updateUserEnteredKey, userData, updateUserNavigation } = props;
+    const { updateUserEnteredKey, userData, updateUserBarNumber, updateUserNavigation } = props;
+
+    const handleNextStep = () => {
+      updateUserNavigation('+');
+      updateUserBarNumber('+');
+    };
+
     return (
       <section>
         <div className="jumbotron">
@@ -24,7 +30,7 @@ button you&apos;ll be taken through to an interactive music stave where you can 
               <div className="input-group mb-3">
                 <input id="userKeyInput" onChange={updateUserEnteredKey} value={userData.userKey} placeholder='C by default' />
                 <div className="input-group-append">
-                  <button id="continueToBarViewBtn" className="btn btn-outline-primary" type="button" onClick={() => updateUserNavigation('+')}>Next Step</button>
+                  <button id="continueToBarViewBtn" className="btn btn-outline-primary" type="button" onClick={handleNextStep}>Next Step</button>
                 </div>
               </div>
               <h4 className="mt-2">How NOT to use:</h4>

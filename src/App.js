@@ -16,7 +16,7 @@ import BarView from './components/bar-view';
 
 function App() { 
 
-  const [userData, setUserData] = useState({});
+  const [userData, setUserData] = useState({activeBarNumber: 0});
 
   useEffect(() => {
     setUserData(retrieveUserData());
@@ -32,6 +32,13 @@ function App() {
     setUserData({
       ...userData, 
       appStep: direction === '+' ? userData.appStep += 1 : userData.appStep += -1
+    })
+  };
+
+  const updateUserBarNumber = direction => {
+    setUserData({
+      ...userData, 
+      activeBarNumber: direction === '+' ? userData.activeBarNumber += 1 : userData.activeBarNumber += -1
     })
   };
 
@@ -53,19 +60,18 @@ function App() {
                 <span id="active-key">{userData.userKey}</span>
 
               </li>
-              {userData.activeBarNumber && (
-                <li className="nav-item p-1">
-    || Bar #:
-                  {' '}
-                  <span id="active-bar">{userData.activeBarNumber}</span>
-                </li>
-                  )}
+              <li className="nav-item p-1">
+  || Bar #:
+                {' '}
+                <span id="active-bar">{userData.activeBarNumber}</span>
+              </li>
             </ul>
           </div>
           {userData.appStep === 0 && (
           <Intro 
             updateUserEnteredKey={updateUserEnteredKey} 
-            userData={userData} 
+            userData={userData}
+            updateUserBarNumber={updateUserBarNumber}
             updateUserNavigation={updateUserNavigation}
           />
           )}
