@@ -1,4 +1,4 @@
-exports.normalize = function normalize(key) {
+export const normalize = (key) => {
     let k = key || '';
 
     if (k.length > 1) {

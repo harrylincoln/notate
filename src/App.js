@@ -8,7 +8,7 @@ import {
   writeToUserData,
   retrieveUserData
 } from './utils/user-data';
-import keys from './utils/keys';
+import { normalize } from './utils/keys';
 
 import Intro from './components/intro';
 import BarView from './components/bar-view';
@@ -25,7 +25,7 @@ function App() {
   }, []);
 
   const updateUserEnteredKey = (e) => {
-    setUserData({...userData, userKey: keys.normalize(e.target.value)})
+    setUserData({...userData, userKey: normalize(e.target.value)})
   };
 
   const updateUserNavigation = direction => {
@@ -39,7 +39,7 @@ function App() {
     const updatedUserData = Object.assign(userData, data);
     setUserData(updatedUserData);
     writeToUserData(updatedUserData);
-  }
+  };
 
     return (
       <>

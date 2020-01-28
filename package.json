@@ -67,17 +67,11 @@
     "lint": "NODE_PATH=src eslint --ext .js,.jsx src",
     "lint:fix": "yarn lint --fix"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm run lint && npm run test",
-      "pre-push": "npm run cypress:CI"
-    }
-  },
   "eslintConfig": {
     "extends": "react-app"
   },
   "engines": {
-    "node": "10.16.0"
+    "node": "10.17.0"
   },
   "browserslist": {
     "production": [
