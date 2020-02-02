@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactGA, { exception } from 'react-ga';
+import ReactGA from 'react-ga';
 import { mount } from 'enzyme';
 import BarView from './bar-view';
 
