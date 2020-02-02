@@ -97,23 +97,15 @@ function BarView(props) {
   }, [shadowUserData]);
 
   const updateBarNumber = op => {
-    const {updateUserData} = props;
       switch (op) {
         case '+':
           updateShadowUserData({...shadowUserData, activeBarNumber: shadowUserData.activeBarNumber + 1});
-          updateUserData({...shadowUserData});
-          
           break;
         case '-':
           updateShadowUserData({...shadowUserData, activeBarNumber: shadowUserData.activeBarNumber - 1});
-          updateUserData(shadowUserData);
-
           break;
         default: // first time
-
           updateShadowUserData({...shadowUserData, activeBarNumber: 1});
-          updateUserData({activeBarNumber: 1});
-
           break;
       }
   };
@@ -147,6 +139,7 @@ function BarView(props) {
   const handleMouseMove = (e) => {
     e.preventDefault();
     e.stopPropagation();
+
     const {offsetX, offsetY} = e.nativeEvent;
     
     // which is the closest stave to the mouse hover
@@ -238,7 +231,7 @@ function BarView(props) {
     const noteDenoms = [64, 32, 16, 8, 4, 2, 1];
     return noteDenoms.map((item) => (
       <button
-        className="btn btn-secondary"
+        className="btn btn-secondary time-grid-toggle-btn"
         type="button"
         key={item}
         style={{
@@ -278,7 +271,7 @@ function BarView(props) {
                 id="decrement-bar"
                 className="btn btn-secondary"
                 type="button"
-                disabled={shadowUserData.activeBarNumber < 2}
+                disabled={shadowUserData.activeBarNumber === 1}
                 onClick={() => saveBarAndNavigate('-')}
               >
 Previous
@@ -317,6 +310,7 @@ Previous
 &#9838;
               </button>
               <button
+                id="add-flat-btn"
                 className="btn btn-secondary"
                 type="button"
                 style={{
@@ -327,6 +321,7 @@ Previous
 &#9837;
               </button>
               <button
+                id="add-sharp-btn"
                 className="btn btn-secondary"
                 type="button"
                 style={{
@@ -339,7 +334,7 @@ Previous
             </div>
             <div className="toggle-controls-container">
               <button className="btn btn-warning" type="button" onClick={() => clearBar()}>Clear bar</button>
-              <button className="btn btn-danger" type="button" onClick={() => reset()}>Reset</button>
+              <button id="reset-app-btn" className="btn btn-danger" type="button" onClick={() => reset()}>Reset</button>
               <button id="build-table-btn" className="btn btn-success" type="button" onClick={() => buildTable()}>Generate tab below</button>
             </div>
           </section>

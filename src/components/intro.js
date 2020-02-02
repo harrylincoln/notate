@@ -1,11 +1,11 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 export default function Intro (props) {
-    const { updateUserEnteredKey, userData, updateUserBarNumber, updateUserNavigation } = props;
+    const { updateUserEnteredKey, userData, updateUserNavigation } = props;
 
     const handleNextStep = () => {
       updateUserNavigation('+');
-      updateUserBarNumber('+');
     };
 
     return (
@@ -80,4 +80,14 @@ button you&apos;ll be taken through to an interactive music stave where you can 
         </div>
       </section>
     )
+}
+
+Intro.propTypes = {
+  updateUserEnteredKey: PropTypes.func.isRequired,
+  updateUserNavigation: PropTypes.func.isRequired,
+  userData: PropTypes.shape({
+    savedNotesArr: [],
+    userKey: 'C',
+    activeBarNumber: PropTypes.number.isRequired
+  }).isRequired
 }

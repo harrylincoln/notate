@@ -13,19 +13,14 @@ context('Bar view', () => {
       prepInGivenKey(startupKey)
     });
 
-    it('should start at bar one', () => {
-        cy.get('#active-bar').should('have.text', '1');
-    });
-
     it('should have the quarter note set as default denom', () => {
         cy.get('#denom-buttons button:nth-of-type(3)').should('have.css', 'border', '1px solid rgb(255, 0, 0)');
     });
 
-    it('on refreshing it should remember the bar, key and where you are', () => {
+    it('on refreshing it should remember the key', () => {
       cy.reload();
-      cy.get('#active-bar').should('have.text', '1');
       cy.get('#active-key').should('have.text', startupKey);
-      expect(localStorage.getItem('userData')).to.eq(`{"appStep":1,"userKey":"${startupKey}","activeBarNumber":1}`)
+      expect(localStorage.getItem('userData')).to.eq(`{"appStep":1,"userKey":"${startupKey}"}`)
     });
   });
 

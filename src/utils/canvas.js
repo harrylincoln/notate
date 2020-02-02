@@ -120,7 +120,7 @@ export const drawNotes = (notesArr, ctx, maxAmountNoteValue) => {
           if(val === 0) {
             ctx.moveTo((note.closestBeatX - (note.baseNoteSize * 2)), note.closestStave.y0);
             ctx.lineTo((note.closestBeatX + (note.baseNoteSize * 2)), note.closestStave.y0);
-          } else{
+          } else {
             ctx.moveTo((note.closestBeatX - (note.baseNoteSize * 2)), (note.closestStave.y0 - (note.baseNoteSize * val)));
             ctx.lineTo((note.closestBeatX + (note.baseNoteSize * 2)), (note.closestStave.y0 - (note.baseNoteSize * val)));
           }
