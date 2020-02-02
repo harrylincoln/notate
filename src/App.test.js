@@ -14,8 +14,6 @@ window.HTMLCanvasElement.prototype.getContext = () => {
   };
 };
 
-const setStateSpy = jest.spyOn(App.prototype, 'setState');
-
 afterEach(() => {    
   jest.clearAllMocks();
 });
@@ -28,37 +26,17 @@ test('App snapshot rendering', () => {
 test('should initialise userData if no userData', () => {
   const getItemSpy = jest.spyOn(Storage.prototype, 'getItem');
   
-  shallow(<App />);
+  mount(<App />);
 
   expect(getItemSpy).toHaveBeenCalled();
-  expect(setStateSpy).toHaveBeenCalledWith({userData: {
-    appStep: 0,
-    userKey: 'C'
-  }});
 });
 
 test('should initialise analytics', () => {
   const reactGaInitSpy = jest.spyOn(ReactGA, 'initialize');
   const reactGaPgViewSpy = jest.spyOn(ReactGA, 'pageview');
 
-  shallow(<App />);
+  mount(<App />);
   expect(reactGaInitSpy).toHaveBeenCalledWith('UA-146065324-1');
   expect(reactGaPgViewSpy).toHaveBeenCalledWith('/home');
 
-});
-
-test('should update user key when continuing through to bar-view', () => {
-  const newKey = 'D';
-  const wrapper = mount(<App />);
-  wrapper.find('#userKeyInput').simulate('change', { target: { value: newKey } });
-  expect(setStateSpy).toHaveBeenCalledWith({userData: {
-    appStep: 0,
-    userKey: newKey
-  }});
-  wrapper.find('#continueToBarViewBtn').simulate('click');
-  expect(setStateSpy).toHaveBeenCalledWith({userData: {
-    activeBarNumber: 1,
-    appStep: 1,
-    userKey: newKey
-  }});
 });

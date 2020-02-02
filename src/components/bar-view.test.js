@@ -6,43 +6,57 @@ import BarView from './bar-view';
 import { savedNotesArrayMock, oneBarHTMLMock } from '../../test/sample-music/sample-component-data';
 
 jest.mock('react-ga');
+
+const clearReactMock = jest.fn();
+const beginPathMock = jest.fn();
+const moveToMock = jest.fn();
+const lineToMock = jest.fn();
+const strokeMock = jest.fn();
+const ellipseMock = jest.fn();
+const fillMock = jest.fn();
+const closePathMock = jest.fn();
+const bezierCurveToMock = jest.fn();
+
 window.HTMLCanvasElement.prototype.getContext = () => {
     return {
-        clearRect: jest.fn(),
-        beginPath: jest.fn(),
-        moveTo: jest.fn(),
-        lineTo: jest.fn(),
-        stroke: jest.fn(),
-        ellipse: jest.fn(),
-        fill: jest.fn(),
-        closePath: jest.fn()
+        clearRect: clearReactMock,
+        beginPath: beginPathMock,
+        moveTo: moveToMock,
+        lineTo: lineToMock,
+        stroke: strokeMock,
+        ellipse: ellipseMock,
+        fill: fillMock,
+        closePath: closePathMock,
+        bezierCurveTo: bezierCurveToMock
     };
 };
 
-const setStateSpy = jest.spyOn(BarView.prototype, 'setState');
-
-const updateUserSpyFunc = jest.fn();
+const updateUserDataSpyFunc = jest.fn();
 
 const userData = {
     userKey: 'C',
     appStep: 1
 };
 
+let component;
+
+beforeEach(() => {
+  component = mount(
+    <BarView 
+      userKey={userData.userKey}
+      updateUserData={updateUserDataSpyFunc}
+      userData={userData}
+    />
+  );
+})
+
 afterEach(() => {    
   jest.clearAllMocks();
 });
 
-test('when component mounts sets new reactGa state', () => {
+it('should set new reactGa state', () => {
     const reactGaPgViewSpy = jest.spyOn(ReactGA, 'pageview');
     const reactGaEventSpy = jest.spyOn(ReactGA, 'event');
-
-    mount(
-      <BarView 
-        userKey={userData.userKey}
-        updateUserData={updateUserSpyFunc}
-        userData={userData}
-      />
-    );
 
     expect(reactGaPgViewSpy).toBeCalledWith('/bar-view');
     expect(reactGaEventSpy).toBeCalledWith({
@@ -51,130 +65,116 @@ test('when component mounts sets new reactGa state', () => {
     });
 });
 
-test('when component mounts should default to define a standard quarter note grid', () => {
-    const reCalcFuncSpy = jest.spyOn(BarView.prototype, 'reCalcBeatLineCords');
-
-    const wrapper = mount(
-      <BarView 
-        userKey={userData.userKey}
-        updateUserData={updateUserSpyFunc}
-        userData={userData}
-      />
-    );
-
-    expect(reCalcFuncSpy).toBeCalled();
-    expect(wrapper.instance().beatLineCords).toEqual([ 40, 200, 360, 520 ]);
-
+it('should draw staves', () => {
+  expect(moveToMock).toHaveBeenCalledTimes(15);
+  expect(lineToMock).toHaveBeenCalledTimes(15);
 });
 
-test('when component mounts for the first time it should update bar numbers', () => {
-    mount(
-      <BarView 
-        userKey={userData.userKey}
-        updateUserData={updateUserSpyFunc}
-        userData={userData}
-      />
-    );
-    expect(setStateSpy).toBeCalledWith({shadowUserData: {
-        activeBarNumber: 1
-      }});
-    expect(updateUserSpyFunc).toBeCalledWith({activeBarNumber: 1});
+it('should reset the app', () => {
+  component.find('#reset-app-btn').simulate('click');
 });
 
-test('when component mounts should draw the staves', () => {
-    const getContextSpy = jest.spyOn(window.HTMLCanvasElement.prototype, 'getContext');
-    const drawStavesSpy = jest.spyOn(BarView.prototype, 'drawStaves');
-    mount(
-      <BarView 
-        userKey={userData.userKey}
-        updateUserData={updateUserSpyFunc}
-        userData={userData}
-      />
-    );
-    
-    expect(getContextSpy).toBeCalledWith('2d');
-    expect(drawStavesSpy).toBeCalledWith();
+it('should draw a tab table', () => {
+  const wrapper = mount(
+    <BarView 
+      userKey={userData.userKey}
+      updateUserData={updateUserDataSpyFunc}
+      userData={{...userData, savedNotesArr: savedNotesArrayMock}}
+    />
+  );
+  expect(wrapper.find('#tab-table').exists()).toBe(false);
+  wrapper.find('#build-table-btn').simulate('click');
+  expect(wrapper.find('#tab-table').exists()).toBe(true);
+  expect(wrapper.find('#tab-table').html()).toEqual(oneBarHTMLMock);
 });
 
-test('when mouseMove in canvas, draw function invoked with note data', () => {
-    const handleMouseMoveSpy = jest.spyOn(BarView.prototype, 'handleMouseMove');
-    const drawSpy = jest.spyOn(BarView.prototype, 'draw');
+describe('initial quarter note grid', () => {
+  const standardMoveToAmount = 22;
+  const standardLineToAmount = 22;
+  const standardEllipAmount = 1;
 
-    const fakeEventData = {
-        nativeEvent: {
-            offsetX: 40, offsetY: 50
-        }
-    };
+  describe('when hovering over the canvas on middle C, first beat', () => {
+    beforeEach(() => {
+      component.find('canvas').simulate('mousemove', { nativeEvent: { offsetX: 33, offsetY: 337 }});
+    });
+    it('should draw a ledger line through the middle of the note', () => {
+      expect(moveToMock).toHaveBeenCalledWith(4, 340);
+      expect(lineToMock).toHaveBeenCalledWith(76, 340);
+    });
 
-    const closestLedger = {
-        ledger: [-2, 0], 
-        note: {C: 2}, 
-        x0: 0, 
-        x1: 800, 
-        y0: 60, 
-        y1: 60
-    };
+    it('should have a standard features for a quaver', () => {
+      expect(moveToMock).toHaveBeenCalledTimes(standardMoveToAmount);
+      expect(lineToMock).toHaveBeenCalledTimes(standardLineToAmount);
+      expect(ellipseMock).toHaveBeenCalledTimes(standardEllipAmount);
+      expect(moveToMock).toHaveBeenCalledWith(64, 340);
+      expect(lineToMock).toHaveBeenCalledWith(64, 232);
+    });
 
-    const wrapper = mount(
-      <BarView 
-        userKey={userData.userKey}
-        updateUserData={updateUserSpyFunc}
-        userData={userData}
-      />
-    );
+    it('base should be filled in', () => {
+      expect(fillMock).toHaveBeenCalledTimes(1);
+    });
 
-    wrapper.find('canvas').simulate('mousemove', fakeEventData);
-    expect(handleMouseMoveSpy).toBeCalled();
-    expect(drawSpy).toBeCalledWith(
-        fakeEventData.nativeEvent.offsetX,
-        fakeEventData.nativeEvent.offsetY, 
-        fakeEventData.nativeEvent.offsetX,
-        closestLedger.y0,
-        closestLedger);
-    wrapper.find('canvas').simulate('click', fakeEventData);
-    expect(setStateSpy).toHaveBeenCalledTimes(2);
-    expect(setStateSpy.mock.calls).toEqual([
-        [{
-            "shadowUserData": {
-                "activeBarNumber": 1,
-            }
-        }],
-        [{
-            ifSavedNotes: true,
-            saveActive: true
-        }]
-    ]);
-});
+    describe('and plotting that first note when clicking', () => {
+      beforeEach(() => {
+        component.find('canvas').simulate('click', { nativeEvent: { offsetX: 33, offsetY: 337 }});
+      });
 
-test('cycle through bars', () => {
-    const updateBarNumberSpy = jest.spyOn(BarView.prototype, 'updateBarNumber');
-    const wrapper = mount(
-      <BarView 
-        userKey={userData.userKey}
-        updateUserData={updateUserSpyFunc}
-        userData={{...userData, savedNotesArr: savedNotesArrayMock}}
-      />
-    );
-    expect(wrapper.find('#decrement-bar').props().disabled).toBe(true);
+      describe('and attempting to show another note on hover between current note and the next in the note grid', () => {
+        beforeEach(() => {
+          component.find('canvas').simulate('mousemove', { nativeEvent: { offsetX: 34, offsetY: 337 }});
+        });
 
-    wrapper.find('#increment-bar').simulate('click');
-    expect(updateBarNumberSpy).toBeCalledWith('+');
-    expect(wrapper.find('#decrement-bar').props().disabled).toBe(false);
+        it('should draw only existing note because it is too far the next barline catchment', () => {
+          expect(fillMock).toHaveBeenCalledTimes(2);
+        });
 
-    wrapper.find('#decrement-bar').simulate('click');
-    expect(updateBarNumberSpy).toBeCalledWith('-');
-});
+        describe('and successfully showing another note on hover', () => {
+          beforeEach(() => {
+            component.find('canvas').simulate('mousemove', { nativeEvent: { offsetX: 200, offsetY: 337 }});
+          });
+  
+          it('should draw two notes as the hover is within catchment of the next barline', () => {
+            expect(fillMock).toHaveBeenCalledTimes(4);
+          });
+        });
+      });
+    });
 
-test('tab table is draw on submit', () => {
-    const wrapper = mount(
-      <BarView 
-        userKey={userData.userKey}
-        updateUserData={updateUserSpyFunc}
-        userData={{...userData, savedNotesArr: savedNotesArrayMock}}
-      />
-    );
-    expect(wrapper.find('#tab-table').exists()).toBe(false);
-    wrapper.find('#build-table-btn').simulate('click');
-    expect(wrapper.find('#tab-table').exists()).toBe(true);
-    expect(wrapper.find('#tab-table').html()).toEqual(oneBarHTMLMock);
+  });
+
+  describe('preselecting an accidental sharp for middle C, first beat', () => {
+    beforeEach(() => {
+      component.find('#add-sharp-btn').simulate('click');
+      component.find('canvas').simulate('mousemove', { nativeEvent: { offsetX: 33, offsetY: 337 }});
+    });
+
+    it('should draw a sharp symbol to the right of the note', () => {
+      expect(moveToMock).toHaveBeenCalledTimes(standardMoveToAmount + 4);
+      expect(lineToMock).toHaveBeenCalledTimes(standardMoveToAmount + 4);
+    });
+  });
+
+  describe('preselecting an accidental flat for middle C, first beat', () => {
+    beforeEach(() => {
+      component.find('#add-flat-btn').simulate('click');
+      component.find('canvas').simulate('mousemove', { nativeEvent: { offsetX: 33, offsetY: 337 }});
+    });
+
+    it('should draw a flat symbol to the right of the note', () => {
+      expect(ellipseMock).toHaveBeenCalledTimes(standardEllipAmount + 1);
+    });
+  });
+
+  describe('when changing the beatline selection to eighth notes', () => {
+    beforeEach(() => {
+      component.find('.time-grid-toggle-btn').at(3).simulate('click');
+      component.find('canvas').simulate('click', { nativeEvent: { offsetX: 40, offsetY: 337 }});
+      component.find('canvas').simulate('mousemove', { nativeEvent: { offsetX: 41, offsetY: 337 }});
+      component.find('canvas').simulate('click', { nativeEvent: { offsetX: 120, offsetY: 337 }});
+    });
+    it('should snap new notes to the note grid approriately', () => {
+      expect(fillMock).toHaveBeenCalledTimes(2);
+      expect(moveToMock).toHaveBeenCalledTimes(23);
+    });
+  });
 });

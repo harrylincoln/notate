@@ -3,7 +3,7 @@ context('App startup', () => {
       cy.visit('http://localhost:3000')
     });
 
-    it('default active key should be C', () => {
+    it('should have a default active key of C', () => {
         cy.get('#active-key').should('have.text', 'C')
     });
 
@@ -15,5 +15,5 @@ context('App startup', () => {
         const newKey = 'D#';
         cy.get('#userKeyInput').type('{backspace}').type(newKey);
         cy.get('#active-key').should('have.text', newKey)
-    })
+    });
 });

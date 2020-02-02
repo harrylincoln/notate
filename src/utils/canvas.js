@@ -1,3 +1,5 @@
+import { staves } from './notation-rules'; 
+
 export const drawNotes = (notesArr, ctx, maxAmountNoteValue) => {
     notesArr.forEach((note) => {
       const denomination = (maxAmountNoteValue / note.activeNoteLength);
@@ -118,7 +120,7 @@ export const drawNotes = (notesArr, ctx, maxAmountNoteValue) => {
           if(val === 0) {
             ctx.moveTo((note.closestBeatX - (note.baseNoteSize * 2)), note.closestStave.y0);
             ctx.lineTo((note.closestBeatX + (note.baseNoteSize * 2)), note.closestStave.y0);
-          } else{
+          } else {
             ctx.moveTo((note.closestBeatX - (note.baseNoteSize * 2)), (note.closestStave.y0 - (note.baseNoteSize * val)));
             ctx.lineTo((note.closestBeatX + (note.baseNoteSize * 2)), (note.closestStave.y0 - (note.baseNoteSize * val)));
           }
@@ -126,4 +128,24 @@ export const drawNotes = (notesArr, ctx, maxAmountNoteValue) => {
         });
       }
     });
+  };
+
+  export const drawStaves = ctx => {
+    ctx.beginPath();
+    staves.map.filter(x => x.draw).forEach(stave => {
+      ctx.moveTo(stave.x0,stave.y0);
+      ctx.lineTo(stave.x1,stave.y1);
+    });
+    ctx.stroke();
+  };
+
+  export const linepointNearestMouse = (stave, x, y) => {
+    const lerp = (a,b,z) => (a+z*(b-a));
+    const dx = stave.x1-stave.x0;
+    const dy = stave.y1-stave.y0;
+    
+    const t=((x-stave.x0)*dx+(y-stave.y0)*dy)/(dx*dx+dy*dy);
+    const lineY=lerp(stave.y0, stave.y1, t);
+
+    return({y:lineY});
   };
