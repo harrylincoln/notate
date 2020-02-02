@@ -17,6 +17,7 @@
     "react/jsx-filename-extension": ["off"],
     "import/prefer-default-export": ["off"],
     "react/prop-types": ["warn"],
+    "react/jsx-indent": ["off"],
     "no-return-assign": ["off"],
     "jsx-a11y/label-has-associated-control": ["off"],
     "jsx-a11y/label-has-for": [ 2, {
