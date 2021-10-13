@@ -40,7 +40,7 @@
     "prop-types": "^15.7.2",
     "react": "^16.8.6",
     "react-app-polyfill": "^1.0.1",
-    "react-dev-utils": "^11.0.2",
+    "react-dev-utils": "^9.0.1",
     "react-dom": "^16.8.6",
     "react-ga": "^2.6.0",
     "react-router-dom": "^5.0.0",
@@ -49,16 +49,13 @@
     "sass-loader": "7.1.0",
     "semver": "6.0.0",
     "style-loader": "0.23.1",
-    "terser-webpack-plugin": "^5.2.4",
+    "terser-webpack-plugin": "1.2.3",
     "ts-pnp": "1.1.2",
     "url-loader": "1.1.2",
     "webpack": "4.29.6",
     "webpack-dev-server": "3.2.1",
     "webpack-manifest-plugin": "2.0.4",
     "workbox-webpack-plugin": "4.2.0"
-  },
-  "resolutions": {
-    "immer": "^9.0.6"
   },
   "scripts": {
     "start": "node scripts/start.js",
