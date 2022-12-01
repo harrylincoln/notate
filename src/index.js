@@ -1,7 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import ReactGA from 'react-ga4';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
+
+ReactGA.initialize('G-JT1NTG52R1');
 
 ReactDOM.render(<App />, document.getElementById('root'));
 

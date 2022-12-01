@@ -42,7 +42,7 @@
     "react-app-polyfill": "^1.0.1",
     "react-dev-utils": "^9.0.1",
     "react-dom": "^16.8.6",
-    "react-ga": "^2.6.0",
+    "react-ga4": "^1.4.1",
     "react-router-dom": "^5.0.0",
     "react-toastify": "^5.3.2",
     "resolve": "1.10.0",
