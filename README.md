@@ -43,3 +43,7 @@ After deployment, verify `/` and `/sheet-music-to-guitar-tabs/` return their cor
 The existing `userData` local-storage key and historical note shapes remain readable. Existing users may still need to review complex chords; the legacy fingering algorithm and musical limitations are retained.
 
 ![Original converter demonstration](./intro-gif.gif)
+
+## License
+
+Licensed under the [MIT License](LICENSE). You may use, modify and redistribute the code, including commercially, provided you retain the copyright and license notice.
