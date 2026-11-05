@@ -1,38 +1,48 @@
-
-name: Node CI
+name: Test and deploy
 
 on:
   pull_request:
   push:
-    branches:
-      - master
+    branches: [master]
+
+permissions:
+  contents: read
+
+# Never interrupt an in-progress upload or overlap releases for the same branch.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   build:
-
-    runs-on: ubuntu-18.04
-
+    name: Verify and publish
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
     steps:
-    - uses: actions/checkout@master
-    - name: Use Node.js 10.17.0
-      uses: actions/setup-node@v1
-      with:
-        node-version: 10.17.0
-    - name: Install & lint
-      run: |
-        npm install
-        npm run lint
-    - name: Unit tests
-      run: npm run test
-    - name: Cypress tests
-      run: npm run cypress:CI
-    - name: Build
-      run: npm run build --if-present
-    - name: Deploy
-      if: github.event_name == 'push' && github.ref == 'refs/heads/master'
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
-        AWS_CLOUDFRONT_DIST_ID: ${{ secrets.AWS_CLOUDFRONT_DIST_ID }}
-      run: node ./deploy-scripts/deploy.js
+      - name: Check out source
+        uses: actions/checkout@v7
+      - name: Set up Node
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Lint
+        run: npm run lint
+      - name: Unit and component tests
+        run: npm test
+      - name: Type-check and build production site
+        run: npm run build
+      - name: Check generated pages and SEO assets
+        run: npm run check:seo
+      - name: Test production site in Chrome
+        run: npm run cypress:CI
+      - name: Upload site to S3, then invalidate CloudFront
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+          AWS_CLOUDFRONT_DIST_ID: ${{ secrets.AWS_CLOUDFRONT_DIST_ID }}
+        run: node ./deploy-scripts/deploy.js

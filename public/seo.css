@@ -1,0 +1,11 @@
+body { margin: 0; color: #212529; background: #fff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; line-height: 1.6; }
+.seo-content { max-width: 70rem; margin: 0 auto; padding: 1.5rem 1rem; }
+.seo-content a { color: #205b92; text-decoration: underline; }
+.seo-content h1 { font-size: clamp(1.8rem, 5vw, 2.5rem); line-height: 1.2; }
+.seo-content h2 { line-height: 1.3; margin-top: 2rem; }
+.guide { max-width: 48rem; }
+.guide table { border-collapse: collapse; width: 100%; }
+.guide th, .guide td { text-align: left; padding: .5rem; border: 1px solid #aaa; }
+.guide pre { overflow-x: auto; padding: 1rem; background: #f3f3f3; }
+.skip-link { position: absolute; left: -10000px; }
+.skip-link:focus { position: static; }

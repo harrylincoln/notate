@@ -1,119 +1,19 @@
-a {
-  color: #a0ae61;
-}
-
-.App {
-  text-align: center;
-}
-
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 40vmin;
-  pointer-events: none;
-}
-
-.App-content {
-  background-color: #e9ecef;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  color: white;
-}
-
-.App-content .canvas-container {
-  display: flex
-}
-
-.App-content button {
-  cursor: pointer
-}
-
-.App-content .canvas-container button:disabled {
-  cursor: not-allowed;
-}
-
-.App-content .canvas-container canvas {
-  background-color: white
-}
-
-.App-content .cof-container {
-  width: 30%;
-  margin: 0 auto;
-}
-
-.App-content .cof-container img {
-  width: 100%
-}
-
-.App-content .toggle-controls-container {
-  margin-top: 0.5rem;
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  background-color: grey;
-  padding: 0.5rem;
-  color: black;
-}
-
-.App-content .toggle-controls-container label {
-  margin-right: 1rem, 
-}
-
-.App-content .toggle-controls-container p {
-  align-self: center;
-  color: white;
-  cursor: pointer;
-  margin: 0;
-}
-
-.App-content .toggle-controls-container button {
-  align-self: center;
-  padding: 0.5rem;
-  margin: 0.25rem;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-.App-nav {
-  position: fixed;
-  top: 0;
-  width: 100%;
-  background: white;
-}
-
-.App-nav-list {
-  margin: 0;
-  padding: 0.25rem;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  list-style: none;
-  width: 100%;
-  border-bottom: 1px solid #282c34;
-}
-
-.App-nav-list li {
-  margin: 0 1rem;
-}
-
-.flx {
-  display: flex;
-}
-
-.code {
-    font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
-    color: #282c34;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
+a { color: #285b1d; }
+.jumbotron { padding: 2rem; margin-bottom: 2rem; background: #e9ecef; border-radius: .3rem; }
+.App-content { background: #e9ecef; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #212529; max-width: 100%; padding: 1rem 0; }
+.App-content h2, .App-content > p { padding: 0 1rem; }
+.canvas-container { display: flex; max-width: 100%; overflow-x: auto; }
+.canvas-container canvas { flex-shrink: 0; background: white; }
+.canvas-container button { flex-shrink: 0; }
+.App-content button { cursor: pointer; }
+.App-content button:disabled { cursor: not-allowed; }
+.toggle-controls-container { margin-top: .5rem; display: flex; flex-wrap: wrap; padding: .5rem; gap: .25rem; color: #212529; }
+.toggle-controls-container input { max-width: 8rem; }
+.toggle-controls-container button, .toggle-controls-container span { align-self: center; }
+.toggle-controls-container button { padding: .5rem; margin: .25rem; }
+.input-group label { margin-right: .5rem; align-self: center; }
+.code { font-family: Menlo, Monaco, Consolas, "Courier New", monospace; color: #282c34; overflow-x: auto; align-items: flex-start; padding: 1rem; }
+.code span { white-space: pre; }
+.conversion-error { color: #8b1a1a; }
+.footer a { color: white; text-decoration: underline; }
+@media (max-width: 575px) { .jumbotron { padding: 1rem; } }

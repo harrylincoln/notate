@@ -1,6 +1,7 @@
 context('App startup', () => {
     beforeEach(() => {
-      cy.visit('http://localhost:3000')
+      cy.clearLocalStorage();
+      cy.visit('/')
     });
 
     it('should have a default active key of C', () => {

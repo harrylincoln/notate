@@ -1,4 +1,4 @@
-const keys = require('./keys');
+import * as keys from './keys';
 
 it('normalizes uppercase G', () => {
     expect(keys.normalize('G')).toBe('G');
