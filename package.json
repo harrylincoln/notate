@@ -46,5 +46,8 @@
     "@aws-sdk/client-cloudfront": "^3.1162.0",
     "dotenv": "^18.0.9",
     "mime-types": "^3.0.2"
+  },
+  "overrides": {
+    "minimatch@^10.0.0": "11.0.1"
   }
 }
