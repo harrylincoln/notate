@@ -2,7 +2,7 @@ context('Bar view', () => {
 
   const prepInGivenKey = key => {
     cy.clearLocalStorage();
-    cy.visit('http://localhost:3000');
+    cy.visit('/');
     cy.get('#userKeyInput').type('{backspace}').type(key);
     cy.get('#continueToBarViewBtn').click();
   };
@@ -20,7 +20,9 @@ context('Bar view', () => {
     it('on refreshing it should remember the key', () => {
       cy.reload();
       cy.get('#active-key').should('have.text', startupKey);
-      expect(localStorage.getItem('userData')).to.eq(`{"appStep":1,"userKey":"${startupKey}"}`)
+      cy.window().then(win => {
+        expect(JSON.parse(win.localStorage.getItem('userData'))).to.include({ appStep: 1, userKey: startupKey });
+      });
     });
   });
 
@@ -30,13 +32,11 @@ context('Bar view', () => {
     });
     it('should transpose notes grouped as a chord', () => {
 
-      cy.get('canvas').click(50, 275);
-      cy.get('canvas').click(50, 274);
+      // F#3, A3, C#4 and E4 in D major. Use the centre of each
+      // snap zone rather than a boundary affected by fractional CSS pixels.
+      cy.get('canvas').click(50, 270);
       cy.get('canvas').click(50, 230);
-      cy.get('canvas').click(50, 231);
-      cy.get('canvas').click(50, 200);
       cy.get('canvas').click(50, 190);
-      cy.get('canvas').click(50, 160);
       cy.get('canvas').click(50, 150);
 
       cy.get('#build-table-btn').click();

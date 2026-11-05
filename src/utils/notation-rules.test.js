@@ -66,3 +66,10 @@ describe('buildAsciTable', () => {
         expect(buildAsciTable(groupByStringOutput)).toEqual(buildAsciTableOutput);
     });
 });
+
+it('does not mutate the shared candidate positions or change results on repeated conversion', () => {
+    const original = JSON.parse(JSON.stringify(groupByPosChordsIn));
+    const first = groupByPosition(groupByPosChordsIn);
+    expect(groupByPosChordsIn).toEqual(original);
+    expect(groupByPosition(groupByPosChordsIn)).toEqual(first);
+});

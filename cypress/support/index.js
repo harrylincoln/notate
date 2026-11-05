@@ -18,3 +18,9 @@ import './commands'
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
+
+// Keep automated tests out of the live Analytics property.
+beforeEach(() => {
+  cy.intercept('https://www.googletagmanager.com/gtag/js*', { statusCode: 200, body: '' });
+  cy.intercept('https://*.google-analytics.com/**', { statusCode: 204, body: '' });
+});
